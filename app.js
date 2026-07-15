@@ -39,7 +39,6 @@ const zoneNext = document.getElementById('zone-next');
 // Settings Elements
 const sizeSlider = document.getElementById('size-slider');
 const sizeVal = document.getElementById('size-val');
-const themeButtons = document.querySelectorAll('.btn-theme');
 const kindleScreen = document.getElementById('kindle-screen');
 const kindleDevice = document.querySelector('.kindle-device');
 
@@ -610,19 +609,7 @@ function setupSettingsEvents() {
         });
     }
 
-    if (themeButtons && themeButtons.length > 0) {
-        themeButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const selectedTheme = e.target.getAttribute('data-screen-theme');
-                
-                themeButtons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                
-                kindleScreen.className = 'kindle-screen';
-                kindleScreen.classList.add(`theme-${selectedTheme}`);
-            });
-        });
-    }
+
 }
 
 function setupFullscreenEvents() {

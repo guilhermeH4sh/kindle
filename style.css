@@ -298,6 +298,11 @@ body.reader-active .app-container {
 /* History / Recent Books Box */
 .history-container {
     width: 100%;
+    display: none;
+}
+
+.history-container.active {
+    display: block;
 }
 
 .history-header {
@@ -515,31 +520,24 @@ body.reader-active .app-container {
 .kindle-device-container {
     flex: 1;
     display: flex;
-    align-items: center;
-    justify-content: center;
     width: 100%;
     max-width: 100%;
-    max-height: calc(100vh - 200px); /* explicit constraint */
     min-height: 0; /* allows shrinking in flex layout */
     padding: 1.5rem;
-    overflow: visible; /* ensure shadow is not clipped */
+    overflow: auto; /* enable internal scroll when device overflows */
     perspective: 1000px;
     transition: var(--transition-smooth);
 }
 
 body.reader-active .kindle-device-container {
     margin: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 /* Kindle Bezel structure */
 .kindle-device {
+    margin: auto; /* perfectly centers and prevents flex scroll bugs */
     position: relative;
-    width: min(calc((100vh - 240px) * 3 / 4.15), 100%);
-    max-width: var(--kindle-width);
-    max-height: 100%;
+    width: min(var(--kindle-width), 100%);
     aspect-ratio: 3 / 4.15;
     border-radius: 4px; /* Industrial sharp edges */
     background: var(--kindle-bezel);
@@ -549,6 +547,7 @@ body.reader-active .kindle-device-container {
     display: flex;
     flex-direction: column;
     transition: var(--transition-smooth);
+    flex-shrink: 0; /* prevents resizing under flex layout */
 }
 
 .kindle-device:fullscreen {

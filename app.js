@@ -103,6 +103,10 @@ function saveBookToHistory(name, size, totalPages, currentPage, pdfData) {
     
     const id = `${name}-${size}`;
     const percentage = Math.round((currentPage / totalPages) * 100);
+    
+    // Convert ArrayBuffer to Blob for universal structured cloning support in IndexedDB
+    const pdfBlob = pdfData instanceof Blob ? pdfData : new Blob([pdfData], { type: 'application/pdf' });
+    
     const bookRecord = {
         id,
         name,
@@ -110,36 +114,59 @@ function saveBookToHistory(name, size, totalPages, currentPage, pdfData) {
         totalPages,
         currentPage,
         percentage,
-        pdfData, // Stores full binary ArrayBuffer
+        pdfData: pdfBlob, 
         lastRead: new Date().getTime()
     };
     
     return new Promise((resolve, reject) => {
-        const transaction = db.transaction(['books'], 'readwrite');
-        const store = transaction.objectStore('books');
-        const request = store.put(bookRecord);
-        
-        request.onsuccess = () => resolve();
-        request.onerror = (e) => reject(e.target.error);
+        try {
+            const transaction = db.transaction(['books'], 'readwrite');
+            const store = transaction.objectStore('books');
+            const request = store.put(bookRecord);
+            
+            request.onsuccess = () => resolve();
+            request.onerror = (e) => {
+                console.error("IndexedDB put error:", e.target.error);
+                reject(e.target.error);
+            };
+            transaction.onerror = (e) => {
+                console.error("IndexedDB transaction error:", e.target.error);
+            };
+        } catch (err) {
+            console.error("Failed to create transaction or put record:", err);
+            reject(err);
+        }
     });
 }
 
 function updateProgressInDB(id, page) {
     if (!db) return;
     
-    const transaction = db.transaction(['books'], 'readwrite');
-    const store = transaction.objectStore('books');
-    const getRequest = store.get(id);
-    
-    getRequest.onsuccess = (e) => {
-        const record = e.target.result;
-        if (record) {
-            record.currentPage = page;
-            record.percentage = Math.round((page / record.totalPages) * 100);
-            record.lastRead = new Date().getTime();
-            store.put(record);
-        }
-    };
+    try {
+        const transaction = db.transaction(['books'], 'readwrite');
+        const store = transaction.objectStore('books');
+        const getRequest = store.get(id);
+        
+        getRequest.onsuccess = (e) => {
+            const record = e.target.result;
+            if (record) {
+                record.currentPage = page;
+                record.percentage = Math.round((page / record.totalPages) * 100);
+                record.lastRead = new Date().getTime();
+                
+                const putRequest = store.put(record);
+                putRequest.onerror = (err) => {
+                    console.error("Error updating progress in DB:", err);
+                };
+            }
+        };
+        
+        getRequest.onerror = (err) => {
+            console.error("Error getting book to update progress:", err);
+        };
+    } catch (err) {
+        console.error("Failed to update progress transaction:", err);
+    }
 }
 
 function getAllBooks() {
@@ -286,8 +313,21 @@ function loadBookFromHistory(id) {
             size: book.size
         };
         
-        // Load with stored page index
-        loadPDF(book.pdfData, book.currentPage);
+        // Convert Blob back to ArrayBuffer for PDF.js loading
+        if (book.pdfData instanceof Blob) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                loadPDF(e.target.result, book.currentPage);
+            };
+            reader.onerror = () => {
+                showError('Erro ao ler o arquivo binário do banco de dados.');
+                dropzone.classList.remove('processing');
+            };
+            reader.readAsArrayBuffer(book.pdfData);
+        } else {
+            // Fallback if it was saved as ArrayBuffer directly
+            loadPDF(book.pdfData, book.currentPage);
+        }
     }).catch(err => {
         console.error('Error fetching book from DB:', err);
         showError('Erro ao abrir o livro do histórico.');
@@ -600,16 +640,13 @@ function setupSettingsEvents() {
             const widthValue = e.target.value;
             sizeVal.textContent = `${widthValue}px`;
             document.documentElement.style.setProperty('--kindle-width', `${widthValue}px`);
-        });
-
-        sizeSlider.addEventListener('change', () => {
+            
+            // Re-render the PDF page in real-time as the slider moves to fit width changes
             if (pdfDoc) {
                 queueRenderPage(pageNum);
             }
         });
     }
-
-
 }
 
 function setupFullscreenEvents() {

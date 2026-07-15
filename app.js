@@ -52,8 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize Lucide Icons
     lucide.createIcons();
     
-    // Initialize DB and load history
+    // Initialize DB, run auto-cleanup on corrupted old entries, and load history UI
     initDB()
+        .then(() => {
+            return validateAndCleanHistory();
+        })
         .then(() => {
             loadHistoryUI();
         })
@@ -315,14 +318,17 @@ function loadBookFromHistory(id) {
     dropzone.classList.add('processing');
     
     getBook(id).then(book => {
+        // Case (b): Book record not found in IndexedDB
         if (!book) {
-            showError('Livro não encontrado no histórico.');
+            console.error(`[Error] Book record with ID ${id} not found in IndexedDB.`);
+            showError('Registro do livro não encontrado no histórico.');
             dropzone.classList.remove('processing');
             return;
         }
         
-        // Handle case where binary PDF data is missing
+        // Case (b): Binary PDF data is missing in the record
         if (!book.pdfData) {
+            console.error(`[Error] PDF binary data is missing in record for book: ${book.name}`);
             showError('Arquivo não encontrado no armazenamento local. Por favor, importe novamente.');
             dropzone.classList.remove('processing');
             
@@ -339,25 +345,134 @@ function loadBookFromHistory(id) {
             size: book.size
         };
         
-        // Convert Blob back to ArrayBuffer for PDF.js loading
+        // Case (c): Convert Blob back to ArrayBuffer, handling FileReader errors
         if (book.pdfData instanceof Blob) {
+            // Check if the Blob is too small (e.g. empty or corrupted)
+            if (book.pdfData.size < 100) {
+                console.error(`[Error] PDF Blob is corrupted or empty (size: ${book.pdfData.size} bytes).`);
+                showError('O arquivo salvo no histórico está corrompido. Por favor, importe novamente.');
+                dropzone.classList.remove('processing');
+                deleteBook(id).then(() => {
+                    loadHistoryUI();
+                });
+                return;
+            }
+
             const reader = new FileReader();
             reader.onload = (e) => {
-                loadPDF(e.target.result, book.currentPage);
+                const arrayBuffer = e.target.result;
+                loadPDFFromHistory(arrayBuffer, book.currentPage, id);
             };
-            reader.onerror = () => {
-                showError('Erro ao ler o arquivo binário do banco de dados.');
+            reader.onerror = (err) => {
+                console.error('[Error] Failed to read PDF Blob from database:', err);
+                showError('Falha ao ler o arquivo armazenado no histórico.');
                 dropzone.classList.remove('processing');
             };
             reader.readAsArrayBuffer(book.pdfData);
+        } else if (book.pdfData instanceof ArrayBuffer) {
+            if (book.pdfData.byteLength < 100) {
+                console.error(`[Error] PDF ArrayBuffer is corrupted or empty (byteLength: ${book.pdfData.byteLength} bytes).`);
+                showError('O arquivo salvo no histórico está corrompido. Por favor, importe novamente.');
+                dropzone.classList.remove('processing');
+                deleteBook(id).then(() => {
+                    loadHistoryUI();
+                });
+                return;
+            }
+            loadPDFFromHistory(book.pdfData, book.currentPage, id);
         } else {
-            // Fallback if it was saved as ArrayBuffer directly
-            loadPDF(book.pdfData, book.currentPage);
+            console.error('[Error] Unsupported pdfData type in IndexedDB:', typeof book.pdfData);
+            showError('Formato de dados não suportado no histórico local.');
+            dropzone.classList.remove('processing');
         }
     }).catch(err => {
-        console.error('Error fetching book from DB:', err);
-        showError('Erro ao abrir o livro do histórico.');
+        console.error('[Error] Failed to query IndexedDB:', err);
+        showError('Erro ao consultar o banco de dados do histórico.');
         dropzone.classList.remove('processing');
+    });
+}
+
+function loadPDFFromHistory(arrayBuffer, startPage = 1, bookId) {
+    showLoading(true);
+    
+    pdfjsLib.getDocument({ data: arrayBuffer }).promise.then(pdf => {
+        pdfDoc = pdf;
+        pageNum = startPage;
+        
+        // Setup pagination values
+        if (totalPagesSpan) totalPagesSpan.textContent = pdfDoc.numPages;
+        if (pageScrubber) {
+            pageScrubber.max = pdfDoc.numPages;
+            pageScrubber.min = 1;
+            pageScrubber.value = pageNum;
+            pageScrubber.disabled = pdfDoc.numPages <= 1;
+        }
+
+        // Switch screens
+        uploadSection.classList.remove('active');
+        readerSection.classList.add('active');
+        document.body.classList.add('reader-active');
+        
+        dropzone.classList.remove('processing');
+        fileInput.value = '';
+        
+        // Save book to IndexedDB storage to refresh timestamp
+        if (currentBookMeta) {
+            saveBookToHistory(
+                currentBookMeta.name,
+                currentBookMeta.size,
+                pdfDoc.numPages,
+                pageNum,
+                arrayBuffer
+            );
+        }
+        
+        // Render target page
+        renderPage(pageNum);
+    }).catch(error => {
+        console.error('[Error] PDF.js failed to parse history PDF data:', error);
+        if (error.name === 'PasswordException') {
+            showError('O PDF do histórico está protegido por senha.');
+        } else {
+            showError('Erro ao carregar o PDF do histórico: o arquivo armazenado está inválido.');
+            // Auto delete invalid entry from history
+            deleteBook(bookId).then(() => {
+                loadHistoryUI();
+            });
+        }
+        dropzone.classList.remove('processing');
+    });
+}
+
+function validateAndCleanHistory() {
+    return getAllBooks().then(books => {
+        const deletePromises = [];
+        books.forEach(book => {
+            let isInvalid = false;
+            
+            // Check if pdfData is missing
+            if (!book.pdfData) {
+                isInvalid = true;
+            } 
+            // Check if pdfData is too small (e.g. empty or corrupted text)
+            else if (book.pdfData instanceof Blob && book.pdfData.size < 100) {
+                isInvalid = true;
+            } 
+            else if (book.pdfData instanceof ArrayBuffer && book.pdfData.byteLength < 100) {
+                isInvalid = true;
+            }
+            
+            if (isInvalid) {
+                console.warn(`Deleting invalid/corrupted history record: ${book.name} (${book.id})`);
+                deletePromises.push(deleteBook(book.id));
+            }
+        });
+        
+        if (deletePromises.length > 0) {
+            return Promise.all(deletePromises);
+        }
+    }).catch(err => {
+        console.error('Error during history validation:', err);
     });
 }
 

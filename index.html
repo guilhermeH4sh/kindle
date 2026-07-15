@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eKindle - Leitor de PDF Digital</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="app-container">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="logo">
+                <i data-lucide="book-open" class="logo-icon"></i>
+                <span class="logo-text">eKindle <span class="badge">Reader</span></span>
+            </div>
+            <p class="tagline">Seu leitor de PDF digital de alta fidelidade e nitidez</p>
+        </header>
+
+        <!-- Dropzone / Upload Area -->
+        <section id="upload-section" class="upload-section active">
+            <div id="dropzone" class="dropzone">
+                <input type="file" id="file-input" accept="application/pdf" hidden>
+                <div class="dropzone-content">
+                    <div class="icon-wrapper">
+                        <i data-lucide="upload-cloud" class="upload-icon"></i>
+                    </div>
+                    <h2>Carregue seu livro em PDF</h2>
+                    <p class="dropzone-text">Arraste e solte o arquivo aqui ou <span class="highlight">clique para procurar</span></p>
+                    <p class="dropzone-limit">Suporta apenas arquivos no formato PDF</p>
+                </div>
+                
+                <!-- Error Toast Inside Dropzone -->
+                <div id="error-message" class="error-toast">
+                    <i data-lucide="alert-circle" class="error-icon"></i>
+                    <span id="error-text">Formato inválido! Por favor selecione um PDF.</span>
+                </div>
+            </div>
+
+            <!-- History / Recent Books -->
+            <div id="history-container" class="history-container">
+                <div class="history-header">
+                    <h3><i data-lucide="history" class="history-icon"></i> Livros Recentes</h3>
+                    <button id="btn-clear-history" class="btn-clear" title="Limpar todo o histórico">Limpar Histórico</button>
+                </div>
+                <div id="history-grid" class="history-grid">
+                    <!-- History cards will be rendered here dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Kindle Mockup Section -->
+        <section id="reader-section" class="reader-section">
+            <div class="reader-actions">
+                <button id="btn-back" class="btn-secondary">
+                    <i data-lucide="arrow-left"></i>
+                    <span>Escolher outro livro</span>
+                </button>
+                <button id="btn-fullscreen" class="btn-secondary" style="margin-left: auto;">
+                    <i data-lucide="maximize"></i>
+                    <span>Tela Cheia</span>
+                </button>
+            </div>
+
+
+            <!-- Kindle Device Wrap -->
+            <div class="kindle-device-container">
+                <div class="kindle-device">
+                    <!-- Device Bezel -->
+                    <div class="kindle-bezel">
+                        
+                        <!-- Kindle Screen -->
+                        <div class="kindle-screen" id="kindle-screen">
+                            
+                            <!-- Invisible Touch Zones for natural page turning -->
+                            <div id="zone-prev" class="touch-zone zone-prev" title="Página anterior (Clique no terço esquerdo)">
+                                <span class="touch-hint"><i data-lucide="chevron-left"></i></span>
+                            </div>
+                            <div id="zone-next" class="touch-zone zone-next" title="Próxima página (Clique nos dois terços direitos)">
+                                <span class="touch-hint"><i data-lucide="chevron-right"></i></span>
+                            </div>
+
+                            <!-- Screen Canvas / PDF Renderer -->
+                            <div class="pdf-container">
+                                <canvas id="pdf-canvas"></canvas>
+                            </div>
+
+                            <!-- Loading Spinner Overlay -->
+                            <div id="loading-overlay" class="loading-overlay">
+                                <div class="spinner-wrapper">
+                                    <div class="spinner"></div>
+                                    <p>Carregando e-ink...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bezel Bottom Branding & Power Button -->
+                        <div class="kindle-bezel-bottom">
+                            <span class="kindle-logo">kindle</span>
+                        </div>
+                    </div>
+                    <!-- Kindle Shadow and Glossy Glare -->
+                    <div class="kindle-glare"></div>
+                </div>
+            </div>
+
+            <!-- Controller Dock (Clean Light Panel below the Kindle) -->
+            <div class="reader-controls">
+                <div class="controls-row">
+                    <button id="btn-prev-page" class="btn-control" title="Página Anterior">
+                        <i data-lucide="chevron-left"></i>
+                    </button>
+
+                    <div class="page-info">
+                        <span class="current-pages">Página <span id="current-page">0</span> de <span id="total-pages">0</span></span>
+                        <span class="percentage" id="reading-percentage">0% lido</span>
+                    </div>
+
+                    <button id="btn-next-page" class="btn-control" title="Próxima Página">
+                        <i data-lucide="chevron-right"></i>
+                    </button>
+                </div>
+                
+                <!-- Scrubber Slider -->
+                <div class="progress-bar-container">
+                    <input type="range" id="page-scrubber" min="1" max="1" value="1" class="page-slider">
+                </div>
+
+                <!-- Configuration Panel -->
+                <div class="settings-divider"></div>
+                <div class="settings-panel">
+                    <div class="setting-item">
+                        <label for="size-slider">
+                            <i data-lucide="maximize-2" class="setting-icon"></i>
+                            <span>Tamanho do Leitor:</span>
+                            <span id="size-val" class="setting-value">600px</span>
+                        </label>
+                        <input type="range" id="size-slider" min="400" max="800" value="600" step="10" class="page-slider">
+                    </div>
+                    <div class="setting-item">
+                        <label>
+                            <i data-lucide="palette" class="setting-icon"></i>
+                            <span>Estilo da Tela:</span>
+                        </label>
+                        <div class="theme-selector">
+                            <button class="btn-theme active" data-screen-theme="off-white" title="Papel Off-White">Off-White</button>
+                            <button class="btn-theme" data-screen-theme="white" title="Branco de Alto Contraste">Branco</button>
+                            <button class="btn-theme" data-screen-theme="sepia" title="Papel Sépia Suave">Sépia</button>
+                            <button class="btn-theme" data-screen-theme="dark" title="Invertido (Modo Noturno)">Escuro</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <p>Ajuste perfeito para telas e-ink. Use as setas <kbd>←</kbd> e <kbd>→</kbd> do teclado para virar páginas.</p>
+    </footer>
+
+    <!-- PDF.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>

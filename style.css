@@ -1,0 +1,1003 @@
+/* 
+   eKindle Reader - ZF/Schaeffler Corporate Light Theme Style
+   Clean lines, corporate blue accents, adjustable screen width and high-fidelity Kindle mockup
+*/
+
+:root {
+    --bg-page: #f4f6f9;         /* Light corporate gray background */
+    --bg-card: #ffffff;         /* Solid white panels */
+    --border-color: #dbe1e9;    /* Thin corporate gray borders */
+    --text-primary: #002c5c;    /* Deep navy ZF blue for headings */
+    --text-secondary: #5a6b82;  /* Slate gray for secondary text */
+    --text-body: #2d3748;       /* Dark gray for normal text */
+    
+    --accent: #0057b7;          /* Classic ZF Blue */
+    --accent-hover: #004094;    /* Darker blue for hover actions */
+    --accent-light: #e5f0ff;    /* Light blue shade for highlights */
+    
+    /* Kindle Default Width (Adjustable via JS slider) */
+    --kindle-width: 600px;
+    
+    /* Kindle Mockup styling */
+    --kindle-bezel: #1e2022;
+    --kindle-bezel-border: #2d3135;
+    --kindle-shadow: 0 10px 30px rgba(0, 44, 92, 0.08), 0 20px 40px rgba(0, 0, 0, 0.15);
+    
+    /* Default screen style */
+    --screen-bg: #f4f3ef;
+    --screen-text: #1c1917;
+    
+    --border-radius-sm: 4px;
+    --border-radius-md: 6px;
+    --border-radius-lg: 8px;
+    
+    --transition-fast: all 0.15s ease;
+    --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-body);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* App Container */
+.app-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem;
+}
+
+/* Header - Corporate Identity Style (ZF/Schaeffler) */
+.main-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 1.5rem;
+    width: 100%;
+    max-width: 700px;
+}
+
+.logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.logo-icon {
+    width: 2rem;
+    height: 2rem;
+    color: var(--accent);
+}
+
+.logo-text {
+    font-size: 2.25rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
+}
+
+.logo-text .badge {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--border-radius-sm);
+    background: var(--accent-light);
+    border: 1px solid rgba(0, 87, 183, 0.2);
+    color: var(--accent);
+    vertical-align: middle;
+    margin-left: 0.25rem;
+}
+
+.tagline {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Sections Control */
+.upload-section, .reader-section {
+    width: 100%;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.upload-section.active, .reader-section.active {
+    display: flex;
+}
+
+/* Dropzone (Corporate Style) */
+.dropzone {
+    width: 100%;
+    max-width: 600px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-top: 4px solid var(--accent); /* Corporate colored top highlight */
+    border-radius: var(--border-radius-sm);
+    padding: 4.5rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    transition: var(--transition-smooth);
+    box-shadow: 0 4px 15px rgba(0, 44, 92, 0.04);
+}
+
+.dropzone:hover {
+    border-color: var(--accent);
+    box-shadow: 0 10px 25px rgba(0, 44, 92, 0.08);
+    transform: translateY(-2px);
+}
+
+.dropzone.dragover {
+    border-color: var(--accent);
+    background: var(--accent-light);
+}
+
+.icon-wrapper {
+    width: 72px;
+    height: 72px;
+    background: var(--accent-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    transition: var(--transition-smooth);
+}
+
+.dropzone:hover .icon-wrapper {
+    transform: scale(1.05);
+}
+
+.upload-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    color: var(--accent);
+}
+
+.dropzone h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+}
+
+.dropzone-text {
+    font-size: 0.95rem;
+    color: var(--text-body);
+    margin-bottom: 0.5rem;
+}
+
+.dropzone-text .highlight {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.dropzone-limit {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+/* Processing indicator inside dropzone */
+.dropzone.processing {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+/* Error Toast Inside Dropzone */
+.error-toast {
+    position: absolute;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: #ef4444;
+    color: #ffffff;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.2);
+    opacity: 0;
+    pointer-events: none;
+    transition: var(--transition-smooth);
+    z-index: 10;
+    white-space: nowrap;
+}
+
+.error-toast.active {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+
+.error-toast.shake {
+    animation: shake 0.4s ease;
+}
+
+.error-icon {
+    width: 1.2rem;
+    height: 1.2rem;
+}
+
+/* Reader Actions */
+.reader-actions {
+    width: 100%;
+    max-width: var(--kindle-width);
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 1.25rem;
+    transition: var(--transition-smooth);
+}
+
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.55rem 1.15rem;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: var(--transition-fast);
+}
+
+.btn-secondary:hover {
+    background: var(--bg-page);
+    border-color: #cbd5e1;
+    color: var(--accent);
+}
+
+.btn-secondary i {
+    width: 0.9rem;
+    height: 0.9rem;
+}
+
+/* Kindle Device Mockup */
+.kindle-device-container {
+    width: 100%;
+    max-width: var(--kindle-width);
+    margin: 0 auto 1.5rem;
+    perspective: 1000px;
+    transition: var(--transition-smooth);
+}
+
+.kindle-device {
+    position: relative;
+    width: 100%;
+    border-radius: 16px;
+    background: var(--kindle-bezel);
+    padding: 20px 20px 42px 20px; /* Kindle margins: taller bezel at bottom */
+    box-shadow: var(--kindle-shadow);
+    border: 1px solid var(--kindle-bezel-border);
+    transition: var(--transition-smooth);
+}
+
+/* Fullscreen Kindle Device Mode */
+.kindle-device:fullscreen {
+    padding: 3vh 3vw;
+    background-color: #0e121a; /* Dark background to maximize contrast */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    border: none;
+    border-radius: 0;
+}
+
+.kindle-device:fullscreen .kindle-bezel {
+    height: 94vh;
+    width: auto;
+    aspect-ratio: 3 / 4;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.kindle-device:fullscreen .kindle-screen {
+    flex: 1;
+    aspect-ratio: auto;
+}
+
+/* Mockup glare effect (anti-glare digital reader glare) */
+.kindle-glare {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.01) 100%);
+    z-index: 15;
+}
+
+.kindle-bezel {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+/* Kindle Screen (Emulated e-ink) */
+.kindle-screen {
+    position: relative;
+    background-color: var(--screen-bg);
+    color: var(--screen-text);
+    aspect-ratio: 3 / 4;
+    width: 100%;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Screen Themes Custom Overrides */
+.kindle-screen.theme-off-white {
+    --screen-bg: #f4f3ef;
+    --screen-text: #1c1917;
+}
+
+.kindle-screen.theme-white {
+    --screen-bg: #ffffff;
+    --screen-text: #000000;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.5);
+}
+
+.kindle-screen.theme-sepia {
+    --screen-bg: #f4ecd8;
+    --screen-text: #4e3621;
+}
+
+.kindle-screen.theme-dark {
+    --screen-bg: #1e1e1e;
+    --screen-text: #e2e8f0;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+/* PDF Container inside Screen */
+.pdf-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#pdf-canvas {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+/* Touch Zones for Page Flipping */
+.touch-zone {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    z-index: 8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.zone-prev {
+    left: 0;
+    width: 30%;
+}
+
+.zone-next {
+    right: 0;
+    width: 70%;
+}
+
+.touch-hint {
+    background: rgba(0, 0, 0, 0.12);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: scale(0.85);
+    transition: var(--transition-smooth);
+    color: var(--screen-text);
+    pointer-events: none;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Adjust colors for touch hint in dark theme screen */
+.kindle-screen.theme-dark .touch-hint {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: var(--screen-text);
+}
+
+.zone-prev:hover .touch-hint {
+    opacity: 1;
+    transform: scale(1) translateX(8px);
+}
+
+.zone-next:hover .touch-hint {
+    opacity: 1;
+    transform: scale(1) translateX(-8px);
+}
+
+/* Bottom Bezel branding */
+.kindle-bezel-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 12px;
+}
+
+.kindle-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #4b5563;
+    letter-spacing: -0.02em;
+    opacity: 0.55;
+    user-select: none;
+}
+
+/* Loading Overlay & Spinner */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit; /* Dynamic background matching the parent screen */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 12;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.loading-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.spinner-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    color: inherit; /* inherits text color based on screen style */
+}
+
+.spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid rgba(0, 0, 0, 0.06);
+    border-radius: 50%;
+    border-top-color: var(--screen-text);
+    animation: spin 1s linear infinite;
+}
+
+.kindle-screen.theme-dark .spinner {
+    border-color: rgba(255, 255, 255, 0.08);
+    border-top-color: var(--screen-text);
+}
+
+.spinner-wrapper p {
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    opacity: 0.8;
+}
+
+/* Controls Box (Corporate light card style) */
+.reader-controls {
+    width: 100%;
+    max-width: var(--kindle-width);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 44, 92, 0.04);
+    transition: var(--transition-smooth);
+}
+
+.controls-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.btn-control {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    width: 38px;
+    height: 38px;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-fast);
+}
+
+.btn-control:hover:not(:disabled) {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+}
+
+.btn-control:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+}
+
+.page-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+}
+
+.current-pages {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.percentage {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Scrubber / Range Slider (Corporate Blue theme) */
+.progress-bar-container {
+    width: 100%;
+    padding: 0.1rem 0;
+}
+
+.page-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 5px;
+    background: #e2e8f0;
+    border-radius: 2px;
+    outline: none;
+}
+
+.page-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    transition: transform 0.1s;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+.page-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.25);
+    background: var(--accent-hover);
+}
+
+.page-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: none;
+    transition: transform 0.1s;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+.page-slider::-moz-range-thumb:hover {
+    transform: scale(1.25);
+    background: var(--accent-hover);
+}
+
+/* Configuration Divider and Panel */
+.settings-divider {
+    height: 1px;
+    background-color: var(--border-color);
+    width: 100%;
+    margin: 0.25rem 0;
+}
+
+.settings-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.setting-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-body);
+}
+
+.setting-item label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: 150px;
+    user-select: none;
+}
+
+.setting-icon {
+    width: 0.95rem;
+    height: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.setting-value {
+    color: var(--accent);
+    font-weight: 700;
+    margin-left: 0.25rem;
+}
+
+.setting-item .page-slider {
+    flex: 1;
+}
+
+/* Theme buttons selector */
+.theme-selector {
+    display: inline-flex;
+    gap: 0.35rem;
+    background: var(--bg-page);
+    padding: 3px;
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--border-color);
+}
+
+.btn-theme {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 0.35rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: var(--transition-fast);
+}
+
+.btn-theme:hover {
+    color: var(--text-primary);
+}
+
+.btn-theme.active {
+    background: var(--bg-card);
+    color: var(--accent);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer Section */
+.app-footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--bg-card);
+    width: 100%;
+    margin-top: auto;
+}
+
+.app-footer kbd {
+    background: var(--bg-page);
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    padding: 0.1rem 0.3rem;
+    font-size: 0.85em;
+    font-family: inherit;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(-50%) rotate(0deg); }
+    20%, 60% { transform: translateX(-52%) rotate(-0.5deg); }
+    40%, 80% { transform: translateX(-48%) rotate(0.5deg); }
+}
+
+/* Responsive Scaling Rules */
+@media (max-width: 768px) {
+    .app-container {
+        padding: 1.5rem 1rem;
+    }
+    
+    .logo-text {
+        font-size: 1.85rem;
+    }
+    
+    .dropzone {
+        padding: 3rem 1.5rem;
+    }
+    
+    /* Device handles responsiveness itself, but we restrict it on small screens */
+    .kindle-device {
+        padding: 14px 14px 32px 14px;
+        border-radius: 12px;
+    }
+    
+    .setting-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .setting-item .page-slider {
+        width: 100%;
+    }
+    
+    .theme-selector {
+        width: 100%;
+        display: flex;
+    }
+    
+    .btn-theme {
+        flex: 1;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-header {
+        margin-bottom: 1.5rem;
+    }
+    
+    .kindle-device {
+        padding: 10px 10px 24px 10px;
+        border-radius: 8px;
+    }
+    
+    .kindle-screen {
+        border-radius: 2px;
+    }
+    
+    .kindle-bezel-bottom {
+        padding-top: 8px;
+    }
+    
+    .kindle-logo {
+        font-size: 0.9rem;
+    }
+}
+
+/* History Container Styles */
+.history-container {
+    width: 100%;
+    max-width: 600px;
+    margin-top: 2.5rem;
+    animation: fadeInUp 0.5s ease-out;
+    display: none; /* Shown dynamically if books exist */
+}
+
+.history-container.active {
+    display: block;
+}
+
+.history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+.history-header h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.history-icon {
+    width: 1.1rem;
+    height: 1.1rem;
+    color: var(--accent);
+}
+
+.btn-clear {
+    background: transparent;
+    border: none;
+    color: #ef4444;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.btn-clear:hover {
+    text-decoration: underline;
+    color: #b91c1c;
+}
+
+/* History Grid */
+.history-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+}
+
+.history-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    padding: 0.85rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    position: relative;
+    user-select: none;
+}
+
+.history-card:hover {
+    border-color: var(--accent);
+    background-color: var(--accent-light);
+}
+
+.book-card-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--accent-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    flex-shrink: 0;
+    transition: var(--transition-fast);
+}
+
+.history-card:hover .book-card-icon {
+    background: var(--accent);
+    color: #ffffff;
+}
+
+.book-card-details {
+    flex: 1;
+    min-width: 0; /* truncate text inside flex container */
+}
+
+.book-card-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 0.2rem;
+}
+
+.book-card-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.book-card-text {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+    font-weight: 500;
+}
+
+.book-progress-bar {
+    width: 100%;
+    height: 4px;
+    background: #e2e8f0;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.book-progress-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.3s ease;
+}
+
+.btn-delete-book {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    z-index: 10;
+}
+
+.btn-delete-book:hover {
+    background: #fecaca;
+    color: #ef4444;
+}
+
+.btn-delete-book i {
+    width: 1rem;
+    height: 1rem;
+}
+

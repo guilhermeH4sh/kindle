@@ -19,7 +19,6 @@
         <div class="header-logo">
             <i data-lucide="book-open" class="logo-icon"></i>
             <span class="logo-text">GUI</span>
-            <span class="logo-subtext">LEITOR TÉCNICO</span>
         </div>
         <div class="header-status">
             <span class="status-indicator"></span>
@@ -30,14 +29,8 @@
     <main class="app-container">
         <!-- Upload & Description Section (Minimalist Layout) -->
         <section id="upload-section" class="upload-section active">
-            <div class="upload-grid">
-                <!-- Info Column (Left Side) -->
-                <div class="info-column">
-                    <h1 class="main-title">Visualizador Técnico de PDF</h1>
-                    <p class="main-desc">Interface minimalista otimizada para leitura e análise de relatórios em telas digitais.</p>
-                </div>
-
-                <!-- Action Column (Right Side) -->
+            <div class="home-container">
+                <!-- Action Column (Centered) -->
                 <div class="action-column">
                     <div id="dropzone" class="dropzone">
                         <input type="file" id="file-input" accept="application/pdf" hidden>
@@ -122,11 +115,6 @@
                 </div>
         </section>
     </main>
-
-    <!-- Footer (Minimal Footer) -->
-    <footer class="app-footer">
-        <p>Leitor de documentos local. Use as setas ← e → do teclado para navegar pelas páginas.</p>
-    </footer>
 
     <!-- PDF.js CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>

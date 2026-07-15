@@ -458,12 +458,13 @@ function loadPDF(arrayBuffer, startPage = 1) {
         pageNum = startPage;
         
         // Setup pagination values
-        totalPagesSpan.textContent = pdfDoc.numPages;
-        pageScrubber.max = pdfDoc.numPages;
-        pageScrubber.min = 1;
-        pageScrubber.value = pageNum;
-        
-        pageScrubber.disabled = pdfDoc.numPages <= 1;
+        if (totalPagesSpan) totalPagesSpan.textContent = pdfDoc.numPages;
+        if (pageScrubber) {
+            pageScrubber.max = pdfDoc.numPages;
+            pageScrubber.min = 1;
+            pageScrubber.value = pageNum;
+            pageScrubber.disabled = pdfDoc.numPages <= 1;
+        }
 
         // Switch screens
         uploadSection.classList.remove('active');
@@ -575,14 +576,16 @@ function changePage(offset) {
 }
 
 function updateNavigationUI() {
-    currentPageSpan.textContent = pageNum;
-    pageScrubber.value = pageNum;
+    if (currentPageSpan) currentPageSpan.textContent = pageNum;
+    if (pageScrubber) pageScrubber.value = pageNum;
     
-    const percentage = Math.round((pageNum / pdfDoc.numPages) * 100);
-    readingPercentage.textContent = `${percentage}% lido`;
+    if (readingPercentage) {
+        const percentage = Math.round((pageNum / pdfDoc.numPages) * 100);
+        readingPercentage.textContent = `${percentage}% lido`;
+    }
     
-    btnPrev.disabled = (pageNum <= 1);
-    btnNext.disabled = (pageNum >= pdfDoc.numPages);
+    if (btnPrev) btnPrev.disabled = (pageNum <= 1);
+    if (btnNext) btnNext.disabled = (pageNum >= pdfDoc.numPages);
 }
 
 function showLoading(isLoading) {
@@ -597,33 +600,43 @@ function showLoading(isLoading) {
 // NAVIGATION & SETTINGS LISTENERS
 // ==========================================
 function setupNavigationEvents() {
-    btnPrev.addEventListener('click', () => changePage(-1));
-    btnNext.addEventListener('click', () => changePage(1));
+    if (btnPrev) btnPrev.addEventListener('click', () => changePage(-1));
+    if (btnNext) btnNext.addEventListener('click', () => changePage(1));
     
-    zonePrev.addEventListener('click', (e) => {
-        e.stopPropagation();
-        changePage(-1);
-    });
+    if (zonePrev) {
+        zonePrev.addEventListener('click', (e) => {
+            e.stopPropagation();
+            changePage(-1);
+        });
+    }
     
-    zoneNext.addEventListener('click', (e) => {
-        e.stopPropagation();
-        changePage(1);
-    });
+    if (zoneNext) {
+        zoneNext.addEventListener('click', (e) => {
+            e.stopPropagation();
+            changePage(1);
+        });
+    }
     
-    pageScrubber.addEventListener('input', (e) => {
-        currentPageSpan.textContent = e.target.value;
-        const percentage = Math.round((parseInt(e.target.value) / pdfDoc.numPages) * 100);
-        readingPercentage.textContent = `${percentage}% lido`;
-    });
+    if (pageScrubber) {
+        pageScrubber.addEventListener('input', (e) => {
+            if (currentPageSpan) currentPageSpan.textContent = e.target.value;
+            if (readingPercentage) {
+                const percentage = Math.round((parseInt(e.target.value) / pdfDoc.numPages) * 100);
+                readingPercentage.textContent = `${percentage}% lido`;
+            }
+        });
+        
+        pageScrubber.addEventListener('change', (e) => {
+            pageNum = parseInt(e.target.value);
+            queueRenderPage(pageNum);
+        });
+    }
     
-    pageScrubber.addEventListener('change', (e) => {
-        pageNum = parseInt(e.target.value);
-        queueRenderPage(pageNum);
-    });
-    
-    btnBack.addEventListener('click', () => {
-        resetToUpload();
-    });
+    if (btnBack) {
+        btnBack.addEventListener('click', () => {
+            resetToUpload();
+        });
+    }
 }
 
 function setupKeyboardEvents() {

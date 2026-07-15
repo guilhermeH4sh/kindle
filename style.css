@@ -544,11 +544,11 @@ body.reader-active .kindle-device-container {
     margin: 0;
 }
 
-/* Kindle Bezel structure */
 .kindle-device {
     margin: auto; /* perfectly centers and prevents flex scroll bugs */
     position: relative;
-    width: min(var(--kindle-width), 100%);
+    width: min(calc((100vh - 120px) * 3 / 4.15), 500px, 90vw);
+    width: min(calc((100dvh - 120px) * 3 / 4.15), 500px, 90vw);
     aspect-ratio: 3 / 4.15;
     border-radius: 4px; /* Industrial sharp edges */
     background: var(--kindle-bezel);

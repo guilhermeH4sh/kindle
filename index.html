@@ -28,48 +28,13 @@
     </header>
 
     <main class="app-container">
-        <!-- Upload & Description Section (Institutional Layout) -->
+        <!-- Upload & Description Section (Minimalist Layout) -->
         <section id="upload-section" class="upload-section active">
             <div class="upload-grid">
                 <!-- Info Column (Left Side) -->
                 <div class="info-column">
-                    <h1 class="main-title">Visualizador de Documentos e Especificações</h1>
-                    <p class="main-desc">
-                        Interface técnica de alto desempenho projetada para leitura e análise de documentação técnica, manuais e relatórios em PDF. Otimizado para máxima fidelidade tipográfica e legibilidade em painéis digitais, incluindo telas e-ink.
-                    </p>
-                    
-                    <div class="technical-specs">
-                        <h3>ESPECIFICAÇÕES DO SISTEMA</h3>
-                        <div class="spec-list">
-                            <div class="spec-item">
-                                <div class="spec-icon-wrapper">
-                                    <i data-lucide="check-square" class="spec-icon"></i>
-                                </div>
-                                <div class="spec-details">
-                                    <h4>Fidelidade Tipográfica</h4>
-                                    <p>Renderização avançada via PDF.js com renderização anti-serrilhamento para nitidez de diagramas técnicos.</p>
-                                </div>
-                            </div>
-                            <div class="spec-item">
-                                <div class="spec-icon-wrapper">
-                                    <i data-lucide="hard-drive" class="spec-icon"></i>
-                                </div>
-                                <div class="spec-details">
-                                    <h4>Persistência em Cache</h4>
-                                    <p>Armazenamento local seguro através de IndexedDB. Documentos recentes e progresso de leitura são salvos localmente e funcionam 100% offline.</p>
-                                </div>
-                            </div>
-                            <div class="spec-item">
-                                <div class="spec-icon-wrapper">
-                                    <i data-lucide="keyboard" class="spec-icon"></i>
-                                </div>
-                                <div class="spec-details">
-                                    <h4>Comandos de Teclado</h4>
-                                    <p>Navegação rápida de páginas pelas teclas de setas laterais <kbd>←</kbd> / <kbd>→</kbd>, <kbd>Home</kbd> e <kbd>End</kbd>.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <h1 class="main-title">Visualizador Técnico de PDF</h1>
+                    <p class="main-desc">Interface minimalista otimizada para leitura e análise de relatórios em telas digitais.</p>
                 </div>
 
                 <!-- Action Column (Right Side) -->
@@ -80,7 +45,7 @@
                             <i data-lucide="file-text" class="upload-icon"></i>
                             <h3>Importar Documento</h3>
                             <p class="dropzone-text">Arraste o arquivo PDF aqui ou <span class="highlight">clique para selecionar</span></p>
-                            <p class="dropzone-limit">Apenas arquivos formato .pdf</p>
+                            <p class="dropzone-limit">Suporta apenas formato .pdf</p>
                         </div>
                         
                         <!-- Error Toast Inside Dropzone -->
@@ -206,9 +171,9 @@
         </section>
     </main>
 
-    <!-- Footer (Minimal Industrial Footer) -->
+    <!-- Footer (Minimal Footer) -->
     <footer class="app-footer">
-        <p>GUI DOCUMENT VIEWER — AMBIENTE SECURE OFFLINE — OTIMIZADO PARA ALTA LEITURA</p>
+        <p>Leitor de documentos local. Use as setas ← e → do teclado para navegar pelas páginas.</p>
     </footer>
 
     <!-- PDF.js CDN -->

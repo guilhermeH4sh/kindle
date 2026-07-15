@@ -76,7 +76,8 @@
                     <i data-lucide="arrow-left"></i>
                     <span>Voltar à lista</span>
                 </button>
-                <button id="btn-fullscreen" class="btn-secondary" style="margin-left: auto;">
+                <div class="reader-filename" id="reader-filename">Carregando...</div>
+                <button id="btn-fullscreen" class="btn-secondary">
                     <i data-lucide="maximize"></i>
                     <span>Tela Cheia</span>
                 </button>
@@ -123,47 +124,49 @@
 
             <!-- Controller Dock (Clean Light Panel below the Kindle) -->
             <div class="reader-controls">
-                <div class="controls-row">
-                    <button id="btn-prev-page" class="btn-control" title="Página Anterior">
-                        <i data-lucide="chevron-left"></i>
-                    </button>
+                <div class="controls-content">
+                    <div class="controls-row">
+                        <button id="btn-prev-page" class="btn-control" title="Página Anterior">
+                            <i data-lucide="chevron-left"></i>
+                        </button>
 
-                    <div class="page-info">
-                        <span class="current-pages">Página <span id="current-page">0</span> de <span id="total-pages">0</span></span>
-                        <span class="percentage" id="reading-percentage">0% lido</span>
+                        <div class="page-info">
+                            <span class="current-pages">Página <span id="current-page">0</span> de <span id="total-pages">0</span></span>
+                            <span class="percentage" id="reading-percentage">0% lido</span>
+                        </div>
+
+                        <button id="btn-next-page" class="btn-control" title="Próxima Página">
+                            <i data-lucide="chevron-right"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Scrubber Slider -->
+                    <div class="progress-bar-container">
+                        <input type="range" id="page-scrubber" min="1" max="1" value="1" class="page-slider">
                     </div>
 
-                    <button id="btn-next-page" class="btn-control" title="Próxima Página">
-                        <i data-lucide="chevron-right"></i>
-                    </button>
-                </div>
-                
-                <!-- Scrubber Slider -->
-                <div class="progress-bar-container">
-                    <input type="range" id="page-scrubber" min="1" max="1" value="1" class="page-slider">
-                </div>
-
-                <!-- Configuration Panel -->
-                <div class="settings-divider"></div>
-                <div class="settings-panel">
-                    <div class="setting-item">
-                        <label for="size-slider">
-                            <i data-lucide="maximize-2" class="setting-icon"></i>
-                            <span>Tamanho do Leitor:</span>
-                            <span id="size-val" class="setting-value">600px</span>
-                        </label>
-                        <input type="range" id="size-slider" min="400" max="800" value="600" step="10" class="page-slider">
-                    </div>
-                    <div class="setting-item">
-                        <label>
-                            <i data-lucide="palette" class="setting-icon"></i>
-                            <span>Estilo da Tela:</span>
-                        </label>
-                        <div class="theme-selector">
-                            <button class="btn-theme active" data-screen-theme="off-white" title="Papel Off-White">Off-White</button>
-                            <button class="btn-theme" data-screen-theme="white" title="Branco de Alto Contraste">Branco</button>
-                            <button class="btn-theme" data-screen-theme="sepia" title="Papel Sépia Suave">Sépia</button>
-                            <button class="btn-theme" data-screen-theme="dark" title="Invertido (Modo Noturno)">Escuro</button>
+                    <!-- Configuration Panel -->
+                    <div class="settings-divider"></div>
+                    <div class="settings-panel">
+                        <div class="setting-item">
+                            <label for="size-slider">
+                                <i data-lucide="maximize-2" class="setting-icon"></i>
+                                <span>Tamanho do Leitor:</span>
+                                <span id="size-val" class="setting-value">600px</span>
+                            </label>
+                            <input type="range" id="size-slider" min="400" max="800" value="600" step="10" class="page-slider">
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <i data-lucide="palette" class="setting-icon"></i>
+                                <span>Estilo da Tela:</span>
+                            </label>
+                            <div class="theme-selector">
+                                <button class="btn-theme active" data-screen-theme="off-white" title="Papel Off-White">Off-White</button>
+                                <button class="btn-theme" data-screen-theme="white" title="Branco de Alto Contraste">Branco</button>
+                                <button class="btn-theme" data-screen-theme="sepia" title="Papel Sépia Suave">Sépia</button>
+                                <button class="btn-theme" data-screen-theme="dark" title="Invertido (Modo Noturno)">Escuro</button>
+                            </div>
                         </div>
                     </div>
                 </div>

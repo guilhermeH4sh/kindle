@@ -410,6 +410,10 @@ function loadPDF(arrayBuffer, startPage = 1) {
         
         // Save book to IndexedDB storage
         if (currentBookMeta) {
+            const filenameEl = document.getElementById('reader-filename');
+            if (filenameEl) {
+                filenameEl.textContent = currentBookMeta.name;
+            }
             saveBookToHistory(
                 currentBookMeta.name,
                 currentBookMeta.size,

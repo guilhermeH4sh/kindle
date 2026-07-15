@@ -395,6 +395,9 @@ function loadBookFromHistory(id) {
 function loadPDFFromHistory(arrayBuffer, startPage = 1, bookId) {
     showLoading(true);
     
+    // Create a copy of the ArrayBuffer before passing it to PDF.js, to prevent neutering issues
+    const arrayBufferCopy = arrayBuffer.slice(0);
+    
     pdfjsLib.getDocument({ data: arrayBuffer }).promise.then(pdf => {
         pdfDoc = pdf;
         pageNum = startPage;
@@ -416,14 +419,14 @@ function loadPDFFromHistory(arrayBuffer, startPage = 1, bookId) {
         dropzone.classList.remove('processing');
         fileInput.value = '';
         
-        // Save book to IndexedDB storage to refresh timestamp
+        // Save book to IndexedDB storage to refresh timestamp using the safe copy
         if (currentBookMeta) {
             saveBookToHistory(
                 currentBookMeta.name,
                 currentBookMeta.size,
                 pdfDoc.numPages,
                 pageNum,
-                arrayBuffer
+                arrayBufferCopy
             );
         }
         
@@ -568,6 +571,9 @@ function handleFiles(files) {
 function loadPDF(arrayBuffer, startPage = 1) {
     showLoading(true);
     
+    // Create a copy of the ArrayBuffer before passing it to PDF.js, to prevent neutering issues
+    const arrayBufferCopy = arrayBuffer.slice(0);
+    
     pdfjsLib.getDocument({ data: arrayBuffer }).promise.then(pdf => {
         pdfDoc = pdf;
         pageNum = startPage;
@@ -589,7 +595,7 @@ function loadPDF(arrayBuffer, startPage = 1) {
         dropzone.classList.remove('processing');
         fileInput.value = '';
         
-        // Save book to IndexedDB storage
+        // Save book to IndexedDB storage using the safe copy
         if (currentBookMeta) {
             const filenameEl = document.getElementById('reader-filename');
             if (filenameEl) {
@@ -600,7 +606,7 @@ function loadPDF(arrayBuffer, startPage = 1) {
                 currentBookMeta.size,
                 pdfDoc.numPages,
                 pageNum,
-                arrayBuffer
+                arrayBufferCopy
             );
         }
         

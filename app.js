@@ -126,9 +126,23 @@ function saveBookToHistory(name, size, totalPages, currentPage, pdfData) {
             
             request.onsuccess = () => resolve();
             request.onerror = (e) => {
-                console.error("IndexedDB put error:", e.target.error);
-                reject(e.target.error);
+                const error = e.target.error;
+                console.error("IndexedDB put error:", error);
+                if (error && error.name === 'QuotaExceededError') {
+                    showError('Espaço insuficiente. O arquivo é muito grande para salvar no histórico local.');
+                }
+                reject(error);
             };
+            
+            transaction.onabort = (e) => {
+                const error = transaction.error;
+                console.error("IndexedDB transaction aborted:", error);
+                if (error && error.name === 'QuotaExceededError') {
+                    showError('Espaço insuficiente. O arquivo é muito grande para salvar no histórico local.');
+                }
+                reject(error);
+            };
+            
             transaction.onerror = (e) => {
                 console.error("IndexedDB transaction error:", e.target.error);
             };
@@ -304,6 +318,18 @@ function loadBookFromHistory(id) {
         if (!book) {
             showError('Livro não encontrado no histórico.');
             dropzone.classList.remove('processing');
+            return;
+        }
+        
+        // Handle case where binary PDF data is missing
+        if (!book.pdfData) {
+            showError('Arquivo não encontrado no armazenamento local. Por favor, importe novamente.');
+            dropzone.classList.remove('processing');
+            
+            // Auto delete invalid entry from history
+            deleteBook(id).then(() => {
+                loadHistoryUI();
+            });
             return;
         }
         

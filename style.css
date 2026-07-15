@@ -519,6 +519,7 @@ body.reader-active .app-container {
     justify-content: center;
     width: 100%;
     max-width: 100%;
+    max-height: calc(100vh - 200px); /* explicit constraint */
     min-height: 0; /* allows shrinking in flex layout */
     padding: 1.5rem;
     overflow: visible; /* ensure shadow is not clipped */
@@ -536,7 +537,7 @@ body.reader-active .kindle-device-container {
 /* Kindle Bezel structure */
 .kindle-device {
     position: relative;
-    width: 100%;
+    width: min(calc((100vh - 240px) * 3 / 4.15), 100%);
     max-width: var(--kindle-width);
     max-height: 100%;
     aspect-ratio: 3 / 4.15;
@@ -631,22 +632,7 @@ body.reader-active .kindle-device-container {
     --screen-text: #e1e7f0;
 }
 
-/* Canvas Theme Filters */
-.kindle-screen.theme-off-white #pdf-canvas {
-    filter: sepia(0.15) contrast(0.98) brightness(0.98) saturate(0.9);
-}
 
-.kindle-screen.theme-white #pdf-canvas {
-    filter: none;
-}
-
-.kindle-screen.theme-sepia #pdf-canvas {
-    filter: sepia(0.55) contrast(0.9) brightness(0.95) saturate(0.85);
-}
-
-.kindle-screen.theme-dark #pdf-canvas {
-    filter: invert(0.92) hue-rotate(180deg) contrast(1.1) brightness(0.95);
-}
 
 .pdf-container {
     width: 100%;

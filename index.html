@@ -3,55 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GUI - Leitor de PDF Digital</title>
+    <title>GUI - Leitor Técnico de PDF</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Main Header (Institutional Top Bar) -->
+    <header class="main-header">
+        <div class="header-logo">
+            <i data-lucide="book-open" class="logo-icon"></i>
+            <span class="logo-text">GUI</span>
+            <span class="logo-subtext">LEITOR TÉCNICO</span>
+        </div>
+        <div class="header-status">
+            <span class="status-indicator"></span>
+            <span class="status-text">AMBIENTE LOCAL</span>
+        </div>
+    </header>
+
     <main class="app-container">
-        <!-- Header -->
-        <header class="main-header">
-            <div class="logo">
-                <i data-lucide="book-open" class="logo-icon"></i>
-                <span class="logo-text">GUI</span>
-            </div>
-            <p class="tagline">Seu leitor de PDF digital de alta fidelidade e nitidez</p>
-        </header>
-
-        <!-- Dropzone / Upload Area -->
+        <!-- Upload & Description Section (Institutional Layout) -->
         <section id="upload-section" class="upload-section active">
-            <div id="dropzone" class="dropzone">
-                <input type="file" id="file-input" accept="application/pdf" hidden>
-                <div class="dropzone-content">
-                    <div class="icon-wrapper">
-                        <i data-lucide="upload-cloud" class="upload-icon"></i>
+            <div class="upload-grid">
+                <!-- Info Column (Left Side) -->
+                <div class="info-column">
+                    <h1 class="main-title">Visualizador de Documentos e Especificações</h1>
+                    <p class="main-desc">
+                        Interface técnica de alto desempenho projetada para leitura e análise de documentação técnica, manuais e relatórios em PDF. Otimizado para máxima fidelidade tipográfica e legibilidade em painéis digitais, incluindo telas e-ink.
+                    </p>
+                    
+                    <div class="technical-specs">
+                        <h3>ESPECIFICAÇÕES DO SISTEMA</h3>
+                        <div class="spec-list">
+                            <div class="spec-item">
+                                <div class="spec-icon-wrapper">
+                                    <i data-lucide="check-square" class="spec-icon"></i>
+                                </div>
+                                <div class="spec-details">
+                                    <h4>Fidelidade Tipográfica</h4>
+                                    <p>Renderização avançada via PDF.js com renderização anti-serrilhamento para nitidez de diagramas técnicos.</p>
+                                </div>
+                            </div>
+                            <div class="spec-item">
+                                <div class="spec-icon-wrapper">
+                                    <i data-lucide="hard-drive" class="spec-icon"></i>
+                                </div>
+                                <div class="spec-details">
+                                    <h4>Persistência em Cache</h4>
+                                    <p>Armazenamento local seguro através de IndexedDB. Documentos recentes e progresso de leitura são salvos localmente e funcionam 100% offline.</p>
+                                </div>
+                            </div>
+                            <div class="spec-item">
+                                <div class="spec-icon-wrapper">
+                                    <i data-lucide="keyboard" class="spec-icon"></i>
+                                </div>
+                                <div class="spec-details">
+                                    <h4>Comandos de Teclado</h4>
+                                    <p>Navegação rápida de páginas pelas teclas de setas laterais <kbd>←</kbd> / <kbd>→</kbd>, <kbd>Home</kbd> e <kbd>End</kbd>.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <h2>Carregue seu livro em PDF</h2>
-                    <p class="dropzone-text">Arraste e solte o arquivo aqui ou <span class="highlight">clique para procurar</span></p>
-                    <p class="dropzone-limit">Suporta apenas arquivos no formato PDF</p>
                 </div>
-                
-                <!-- Error Toast Inside Dropzone -->
-                <div id="error-message" class="error-toast">
-                    <i data-lucide="alert-circle" class="error-icon"></i>
-                    <span id="error-text">Formato inválido! Por favor selecione um PDF.</span>
-                </div>
-            </div>
 
-            <!-- History / Recent Books -->
-            <div id="history-container" class="history-container">
-                <div class="history-header">
-                    <h3><i data-lucide="history" class="history-icon"></i> Livros Recentes</h3>
-                    <button id="btn-clear-history" class="btn-clear" title="Limpar todo o histórico">Limpar Histórico</button>
-                </div>
-                <div id="history-grid" class="history-grid">
-                    <!-- History cards will be rendered here dynamically -->
+                <!-- Action Column (Right Side) -->
+                <div class="action-column">
+                    <div id="dropzone" class="dropzone">
+                        <input type="file" id="file-input" accept="application/pdf" hidden>
+                        <div class="dropzone-content">
+                            <i data-lucide="file-text" class="upload-icon"></i>
+                            <h3>Importar Documento</h3>
+                            <p class="dropzone-text">Arraste o arquivo PDF aqui ou <span class="highlight">clique para selecionar</span></p>
+                            <p class="dropzone-limit">Apenas arquivos formato .pdf</p>
+                        </div>
+                        
+                        <!-- Error Toast Inside Dropzone -->
+                        <div id="error-message" class="error-toast">
+                            <i data-lucide="alert-circle" class="error-icon"></i>
+                            <span id="error-text">Formato inválido! Por favor selecione um PDF.</span>
+                        </div>
+                    </div>
+
+                    <!-- History / Recent Books -->
+                    <div id="history-container" class="history-container">
+                        <div class="history-header">
+                            <h3><i data-lucide="history" class="history-icon"></i> DOCUMENTOS RECENTES</h3>
+                            <button id="btn-clear-history" class="btn-clear" title="Limpar todo o histórico">Limpar Histórico</button>
+                        </div>
+                        <div id="history-grid" class="history-grid">
+                            <!-- History cards will be rendered here dynamically -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -61,7 +109,7 @@
             <div class="reader-actions">
                 <button id="btn-back" class="btn-secondary">
                     <i data-lucide="arrow-left"></i>
-                    <span>Escolher outro livro</span>
+                    <span>Voltar à lista</span>
                 </button>
                 <button id="btn-fullscreen" class="btn-secondary" style="margin-left: auto;">
                     <i data-lucide="maximize"></i>
@@ -69,21 +117,18 @@
                 </button>
             </div>
 
-
             <!-- Kindle Device Wrap -->
             <div class="kindle-device-container">
                 <div class="kindle-device">
                     <!-- Device Bezel -->
                     <div class="kindle-bezel">
-                        
                         <!-- Kindle Screen -->
                         <div class="kindle-screen" id="kindle-screen">
-                            
                             <!-- Invisible Touch Zones for natural page turning -->
-                            <div id="zone-prev" class="touch-zone zone-prev" title="Página anterior (Clique no terço esquerdo)">
+                            <div id="zone-prev" class="touch-zone zone-prev" title="Página anterior">
                                 <span class="touch-hint"><i data-lucide="chevron-left"></i></span>
                             </div>
-                            <div id="zone-next" class="touch-zone zone-next" title="Próxima página (Clique nos dois terços direitos)">
+                            <div id="zone-next" class="touch-zone zone-next" title="Próxima página">
                                 <span class="touch-hint"><i data-lucide="chevron-right"></i></span>
                             </div>
 
@@ -101,7 +146,7 @@
                             </div>
                         </div>
 
-                        <!-- Bezel Bottom Branding & Power Button -->
+                        <!-- Bezel Bottom Branding -->
                         <div class="kindle-bezel-bottom">
                             <span class="kindle-logo">GUI</span>
                         </div>
@@ -161,9 +206,9 @@
         </section>
     </main>
 
-    <!-- Footer -->
+    <!-- Footer (Minimal Industrial Footer) -->
     <footer class="app-footer">
-        <p>Ajuste perfeito para telas e-ink. Use as setas <kbd>←</kbd> e <kbd>→</kbd> do teclado para virar páginas.</p>
+        <p>GUI DOCUMENT VIEWER — AMBIENTE SECURE OFFLINE — OTIMIZADO PARA ALTA LEITURA</p>
     </footer>
 
     <!-- PDF.js CDN -->

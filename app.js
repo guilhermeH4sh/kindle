@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ==========================================
 // INDEXEDDB DATABASE OPERATIONS
 // ==========================================
-const DB_NAME = 'eKindleDB';
+const DB_NAME = 'GUIDB';
 const DB_VERSION = 1;
 
 function initDB() {
@@ -403,6 +403,7 @@ function loadPDF(arrayBuffer, startPage = 1) {
         // Switch screens
         uploadSection.classList.remove('active');
         readerSection.classList.add('active');
+        document.body.classList.add('reader-active');
         
         dropzone.classList.remove('processing');
         fileInput.value = '';
@@ -691,6 +692,7 @@ function resetToUpload() {
     // Reset interface displays
     readerSection.classList.remove('active');
     uploadSection.classList.add('active');
+    document.body.classList.remove('reader-active');
     
     // Reload history list on home screen to reflect last read progress
     loadHistoryUI();

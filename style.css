@@ -52,6 +52,27 @@ body {
     overflow-x: hidden;
 }
 
+/* Reader Active Layout adjustments for perfect centering */
+body.reader-active {
+    overflow: hidden;
+}
+
+body.reader-active .main-header,
+body.reader-active .app-footer {
+    display: none !important;
+}
+
+body.reader-active .app-container {
+    max-width: 100% !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* App Container */
 .app-container {
     flex: 1;
@@ -93,18 +114,6 @@ body {
     font-weight: 700;
     letter-spacing: -0.03em;
     color: var(--text-primary);
-}
-
-.logo-text .badge {
-    font-size: 0.8rem;
-    font-weight: 600;
-    padding: 0.15rem 0.5rem;
-    border-radius: var(--border-radius-sm);
-    background: var(--accent-light);
-    border: 1px solid rgba(0, 87, 183, 0.2);
-    color: var(--accent);
-    vertical-align: middle;
-    margin-left: 0.25rem;
 }
 
 .tagline {
@@ -255,6 +264,22 @@ body {
     transition: var(--transition-smooth);
 }
 
+body.reader-active .reader-actions {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    right: 1.5rem;
+    width: calc(100% - 3rem);
+    max-width: none;
+    margin-bottom: 0;
+    z-index: 100;
+    pointer-events: none;
+}
+
+body.reader-active .reader-actions button {
+    pointer-events: auto;
+}
+
 .btn-secondary {
     display: inline-flex;
     align-items: center;
@@ -288,6 +313,13 @@ body {
     margin: 0 auto 1.5rem;
     perspective: 1000px;
     transition: var(--transition-smooth);
+}
+
+body.reader-active .kindle-device-container {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .kindle-device {
@@ -467,13 +499,14 @@ body {
 }
 
 .kindle-logo {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Inter', sans-serif;
     font-size: 1.1rem;
-    font-weight: 700;
+    font-weight: 800;
     color: #4b5563;
-    letter-spacing: -0.02em;
+    letter-spacing: 0.15em;
     opacity: 0.55;
     user-select: none;
+    text-transform: uppercase;
 }
 
 /* Loading Overlay & Spinner */
@@ -540,6 +573,34 @@ body {
     gap: 1rem;
     box-shadow: 0 4px 15px rgba(0, 44, 92, 0.04);
     transition: var(--transition-smooth);
+}
+
+body.reader-active .reader-controls {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 3rem);
+    max-width: var(--kindle-width);
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(219, 225, 233, 0.8);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-height: 750px) {
+    body.reader-active .reader-actions {
+        top: 0.75rem;
+    }
+    body.reader-active .reader-controls {
+        bottom: 0.75rem;
+        padding: 0.75rem;
+    }
+    .kindle-device {
+        padding: 12px 12px 28px 12px;
+    }
 }
 
 .controls-row {

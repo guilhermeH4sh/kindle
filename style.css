@@ -645,15 +645,18 @@ body.reader-active .kindle-device-container {
     align-items: center;
     justify-content: center;
 }
-
 .zone-prev {
     left: 0;
     width: 25%;
+    justify-content: flex-start;
+    padding-left: 24px;
 }
 
 .zone-next {
     right: 0;
     width: 75%;
+    justify-content: flex-end;
+    padding-right: 24px;
 }
 
 .touch-hint {

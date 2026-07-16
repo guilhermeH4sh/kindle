@@ -106,14 +106,23 @@
                                 <canvas id="pdf-canvas"></canvas>
                             </div>
 
-                            <!-- Loading Spinner Overlay -->
-                            <div id="loading-overlay" class="loading-overlay">
-                                <div class="spinner-wrapper">
-                                    <div class="spinner"></div>
-                                    <p>Carregando e-ink...</p>
-                                </div>
-                            </div>
-                        </div>
+                             <!-- Loading Spinner Overlay -->
+                             <div id="loading-overlay" class="loading-overlay">
+                                 <div class="spinner-wrapper">
+                                     <div class="spinner"></div>
+                                     <p>Carregando e-ink...</p>
+                                 </div>
+                             </div>
+
+                             <!-- Kindle Footer Page Selector -->
+                             <div class="kindle-footer">
+                                 <div class="page-selector">
+                                     <span>Pág.</span>
+                                     <input type="number" id="page-input" class="page-input" min="1" value="1">
+                                     <span>de <span id="page-total">1</span></span>
+                                 </div>
+                             </div>
+                         </div>
 
                         <!-- Bezel Bottom Branding -->
                         <div class="kindle-bezel-bottom">

@@ -35,6 +35,8 @@ const pageScrubber = document.getElementById('page-scrubber');
 
 const zonePrev = document.getElementById('zone-prev');
 const zoneNext = document.getElementById('zone-next');
+const pageInput = document.getElementById('page-input');
+const pageTotalSpan = document.getElementById('page-total');
 
 // Settings Elements
 const sizeSlider = document.getElementById('size-slider');
@@ -405,6 +407,11 @@ function loadPDFFromHistory(arrayBuffer, startPage = 1, bookId) {
         
         // Setup pagination values
         if (totalPagesSpan) totalPagesSpan.textContent = pdfDoc.numPages;
+        if (pageTotalSpan) pageTotalSpan.textContent = pdfDoc.numPages;
+        if (pageInput) {
+            pageInput.max = pdfDoc.numPages;
+            pageInput.value = pageNum;
+        }
         if (pageScrubber) {
             pageScrubber.max = pdfDoc.numPages;
             pageScrubber.min = 1;
@@ -581,6 +588,11 @@ function loadPDF(arrayBuffer, startPage = 1) {
         
         // Setup pagination values
         if (totalPagesSpan) totalPagesSpan.textContent = pdfDoc.numPages;
+        if (pageTotalSpan) pageTotalSpan.textContent = pdfDoc.numPages;
+        if (pageInput) {
+            pageInput.max = pdfDoc.numPages;
+            pageInput.value = pageNum;
+        }
         if (pageScrubber) {
             pageScrubber.max = pdfDoc.numPages;
             pageScrubber.min = 1;
@@ -699,6 +711,7 @@ function changePage(offset) {
 
 function updateNavigationUI() {
     if (currentPageSpan) currentPageSpan.textContent = pageNum;
+    if (pageInput) pageInput.value = pageNum;
     if (pageScrubber) pageScrubber.value = pageNum;
     
     if (readingPercentage) {
@@ -757,6 +770,28 @@ function setupNavigationEvents() {
     if (btnBack) {
         btnBack.addEventListener('click', () => {
             resetToUpload();
+        });
+    }
+
+    if (pageInput) {
+        pageInput.addEventListener('change', (e) => {
+            if (!pdfDoc) return;
+            let targetPage = parseInt(e.target.value);
+            if (isNaN(targetPage) || targetPage < 1) {
+                targetPage = 1;
+            } else if (targetPage > pdfDoc.numPages) {
+                targetPage = pdfDoc.numPages;
+            }
+            pageNum = targetPage;
+            e.target.value = pageNum;
+            queueRenderPage(pageNum);
+        });
+
+        pageInput.addEventListener('keydown', (e) => {
+            e.stopPropagation(); // Evita ativar navegação global por teclado enquanto digita
+            if (e.key === 'Enter') {
+                pageInput.blur();
+            }
         });
     }
 }

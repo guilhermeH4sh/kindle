@@ -73,7 +73,7 @@ body {
 }
 
 .header-logo .logo-image {
-    height: 2.6rem;
+    height: 4.5rem;
     width: auto;
     border-radius: var(--border-radius-sm);
     object-fit: contain;

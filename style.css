@@ -73,17 +73,10 @@ body {
 }
 
 .header-logo .logo-image {
-    height: 1.6rem;
+    height: 2.6rem;
     width: auto;
     border-radius: var(--border-radius-sm);
     object-fit: contain;
-}
-
-.header-logo .logo-text {
-    font-size: 1.2rem;
-    font-weight: 800;
-    letter-spacing: 0.05em;
-    color: var(--text-primary);
 }
 
 .header-logo .logo-subtext {

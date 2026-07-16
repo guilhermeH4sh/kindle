@@ -61,7 +61,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 1.25rem 2rem;
-    background: #ffffff;
+    background: var(--bg-card);
     border-bottom: 1px solid var(--border-color);
     width: 100%;
 }
@@ -462,7 +462,7 @@ body.reader-active .reader-section {
 .reader-actions {
     width: 100%;
     height: 3.5rem;
-    background: #ffffff;
+    background: var(--bg-card);
     border-bottom: 1px solid var(--border-color);
     display: flex;
     align-items: center;
@@ -1044,25 +1044,25 @@ body.reader-active .kindle-device-container {
 
 /* Dark Mode Color Token Overrides */
 body.dark-theme {
-    --bg-page: #121212;             /* Sleek dark background */
-    --bg-card: #1a1a1a;             /* Dark panels */
-    --border-color: #2c2c2c;        /* Dark borders */
-    --text-primary: #f5f5f5;        /* Pure monochrome light headings */
-    --text-secondary: #8c8c8c;      /* Medium gray secondary texts */
-    --text-body: #cccccc;           /* Graphite gray for body */
+    --bg-page: #0a0b0d;             /* Modern deep slate-black background */
+    --bg-card: #13151a;             /* Modern obsidian dark card */
+    --border-color: #20232a;        /* Modern clean border */
+    --text-primary: #f5f6f8;        /* Bright neutral light */
+    --text-secondary: #8a8f98;      /* Slate-gray secondary */
+    --text-body: #ccd0d8;           /* Light graphite body */
     
-    --accent: #f5f5f5;
+    --accent: #f5f6f8;
     --accent-hover: #ffffff;
-    --accent-light: #262626;
-    --accent-status: #8c8c8c;
+    --accent-light: #1b1e24;
+    --accent-status: #8a8f98;
     
     /* Device Bezel in Dark mode */
-    --kindle-bezel: #090a0c;
-    --kindle-bezel-border: #16181a;
-    --kindle-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 16px 32px rgba(0, 0, 0, 0.6);
+    --kindle-bezel: #08090b;
+    --kindle-bezel-border: #131518;
+    --kindle-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 16px 32px rgba(0, 0, 0, 0.7);
     
     /* E-reader Screen in Dark Mode (Automatic Canvas invert) */
-    --screen-bg: #222326;
+    --screen-bg: #1b1c1e;
     --screen-text: #e1e7f0;
 }
 

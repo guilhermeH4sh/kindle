@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSettingsEvents();
     setupFullscreenEvents();
     setupHistoryEvents();
+    setupThemeEvents();
 });
 
 // ==========================================
@@ -896,3 +897,50 @@ window.addEventListener('resize', () => {
         renderPage(pageNum);
     }, 150);
 });
+
+// ==========================================
+// THEME SWITCHER (LIGHT/DARK MODE)
+// ==========================================
+function setupThemeEvents() {
+    const btnHomeToggle = document.getElementById('btn-theme-toggle');
+    const btnReaderToggle = document.getElementById('btn-reader-theme-toggle');
+    
+    // Check saved theme or use system preference
+    const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        updateThemeIcons(true);
+    } else {
+        document.body.classList.remove('dark-theme');
+        updateThemeIcons(false);
+    }
+    
+    function toggleTheme() {
+        const isDark = document.body.classList.toggle('dark-theme');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        updateThemeIcons(isDark);
+        
+        // Recreate icons to sync styling if necessary
+        lucide.createIcons();
+    }
+    
+    function updateThemeIcons(isDark) {
+        const sunIcons = document.querySelectorAll('.theme-icon-sun');
+        const moonIcons = document.querySelectorAll('.theme-icon-moon');
+        
+        sunIcons.forEach(sun => {
+            sun.style.display = isDark ? 'block' : 'none';
+        });
+        moonIcons.forEach(moon => {
+            moon.style.display = isDark ? 'none' : 'block';
+        });
+    }
+    
+    if (btnHomeToggle) {
+        btnHomeToggle.addEventListener('click', toggleTheme);
+    }
+    if (btnReaderToggle) {
+        btnReaderToggle.addEventListener('click', toggleTheme);
+    }
+}

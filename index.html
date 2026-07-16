@@ -21,6 +21,11 @@
             <span class="logo-text">GUI</span>
         </div>
         <div class="header-status">
+            <!-- Theme Toggle Button -->
+            <button id="btn-theme-toggle" class="btn-theme-toggle" title="Alternar Tema (Claro/Escuro)">
+                <i data-lucide="sun" class="theme-icon-sun" style="display: none;"></i>
+                <i data-lucide="moon" class="theme-icon-moon"></i>
+            </button>
             <span class="status-indicator"></span>
             <span class="status-text">AMBIENTE LOCAL</span>
         </div>
@@ -70,10 +75,17 @@
                     <span>Voltar à lista</span>
                 </button>
                 <div class="reader-filename" id="reader-filename">Carregando...</div>
-                <button id="btn-fullscreen" class="btn-secondary">
-                    <i data-lucide="maximize"></i>
-                    <span>Tela Cheia</span>
-                </button>
+                <div class="reader-actions-right">
+                    <!-- Theme Toggle Button (Inside Reader) -->
+                    <button id="btn-reader-theme-toggle" class="btn-theme-toggle btn-secondary" title="Alternar Tema (Claro/Escuro)">
+                        <i data-lucide="sun" class="theme-icon-sun" style="display: none;"></i>
+                        <i data-lucide="moon" class="theme-icon-moon"></i>
+                    </button>
+                    <button id="btn-fullscreen" class="btn-secondary">
+                        <i data-lucide="maximize"></i>
+                        <span>Tela Cheia</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Kindle Device Wrap -->

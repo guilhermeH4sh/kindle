@@ -1007,3 +1007,66 @@ body.reader-active .kindle-device-container {
         font-size: 0.8rem;
     }
 }
+
+/* ==========================================
+   GLOBAL THEME SYSTEM & DARK MODE
+   ========================================== */
+.btn-theme-toggle {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    width: 28px;
+    height: 28px;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    padding: 0;
+}
+
+.btn-theme-toggle:hover {
+    color: var(--text-primary);
+    background: var(--accent-light);
+}
+
+.btn-theme-toggle i {
+    width: 1.15rem;
+    height: 1.15rem;
+}
+
+.reader-actions-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Dark Mode Color Token Overrides */
+body.dark-theme {
+    --bg-page: #121212;             /* Sleek dark background */
+    --bg-card: #1a1a1a;             /* Dark panels */
+    --border-color: #2c2c2c;        /* Dark borders */
+    --text-primary: #f5f5f5;        /* Pure monochrome light headings */
+    --text-secondary: #8c8c8c;      /* Medium gray secondary texts */
+    --text-body: #cccccc;           /* Graphite gray for body */
+    
+    --accent: #f5f5f5;
+    --accent-hover: #ffffff;
+    --accent-light: #262626;
+    --accent-status: #8c8c8c;
+    
+    /* Device Bezel in Dark mode */
+    --kindle-bezel: #090a0c;
+    --kindle-bezel-border: #16181a;
+    --kindle-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 16px 32px rgba(0, 0, 0, 0.6);
+    
+    /* E-reader Screen in Dark Mode (Automatic Canvas invert) */
+    --screen-bg: #222326;
+    --screen-text: #e1e7f0;
+}
+
+/* Automatic PDF Canvas Inversion in Dark Theme */
+body.dark-theme #pdf-canvas {
+    filter: invert(0.9) hue-rotate(180deg);
+}

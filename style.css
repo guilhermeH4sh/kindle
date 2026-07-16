@@ -72,10 +72,11 @@ body {
     gap: 0.5rem;
 }
 
-.header-logo .logo-icon {
-    width: 1.2rem;
-    height: 1.2rem;
-    color: var(--accent);
+.header-logo .logo-image {
+    height: 1.6rem;
+    width: auto;
+    border-radius: var(--border-radius-sm);
+    object-fit: contain;
 }
 
 .header-logo .logo-text {

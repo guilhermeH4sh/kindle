@@ -1328,7 +1328,20 @@ function renderOpenLibraryResults(docs) {
     searchResultsGrid.innerHTML = '';
     
     // Filtra apenas livros que possuem identificador do Internet Archive (IA) e são de domínio público (acesso livre, sem empréstimo)
-    const docsWithPdf = docs.filter(doc => doc.ia && doc.ia.length > 0 && doc.ebook_access === 'public');
+    // Além disso, desconsidera gravações de áudio/LPs (prefixos lp_, cd_, audio_ etc.)
+    const docsWithPdf = docs.filter(doc => {
+        if (!doc.ia || doc.ia.length === 0 || doc.ebook_access !== 'public') return false;
+        const validId = doc.ia.find(id => {
+            const lowerId = id.toLowerCase();
+            return !lowerId.startsWith('lp_') && 
+                   !lowerId.startsWith('cd_') && 
+                   !lowerId.startsWith('audio') && 
+                   !lowerId.includes('sound') &&
+                   !lowerId.includes('music') &&
+                   !lowerId.includes('recording');
+        });
+        return !!validId;
+    });
     
     if (docsWithPdf.length === 0) {
         searchResultsGrid.innerHTML = `
@@ -1345,7 +1358,15 @@ function renderOpenLibraryResults(docs) {
         const coverId = doc.cover_i;
         const secureThumbnail = coverId ? `https://covers.openlibrary.org/b/id/${coverId}-M.jpg` : null;
         
-        const iaId = doc.ia[0];
+        const iaId = doc.ia.find(id => {
+            const lowerId = id.toLowerCase();
+            return !lowerId.startsWith('lp_') && 
+                   !lowerId.startsWith('cd_') && 
+                   !lowerId.startsWith('audio') && 
+                   !lowerId.includes('sound') &&
+                   !lowerId.includes('music') &&
+                   !lowerId.includes('recording');
+        });
         const pdfUrl = `https://archive.org/download/${iaId}/${iaId}.pdf`;
         
         const card = document.createElement('div');

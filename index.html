@@ -21,6 +21,11 @@
             <img src="logo.jpg" alt="Leia Logo" class="logo-image">
         </div>
         <div class="header-status">
+            <!-- Library Navigation Button -->
+            <button id="btn-nav-library" class="btn-nav-library" title="Minha Biblioteca">
+                <i data-lucide="book-open"></i>
+                <span class="btn-label">Minha Biblioteca</span>
+            </button>
             <!-- Theme Toggle Button -->
             <button id="btn-theme-toggle" class="btn-theme-toggle" title="Alternar Tema (Claro/Escuro)">
                 <i data-lucide="sun" class="theme-icon-sun" style="display: none;"></i>
@@ -59,6 +64,53 @@
                         </div>
                         <div id="history-grid" class="history-grid">
                             <!-- History cards will be rendered here dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Library Section -->
+        <section id="library-section" class="library-section">
+            <div class="home-container">
+                <div class="action-column">
+                    <!-- Library Title & Back Button -->
+                    <div class="history-header" style="border-bottom: none; margin-bottom: 0.5rem; padding-bottom: 0;">
+                        <h2 style="font-size: 1.1rem; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem; margin: 0;">
+                            <i data-lucide="book-open" style="width: 1.2rem; height: 1.2rem;"></i> Minha Biblioteca
+                        </h2>
+                        <button id="btn-library-back" class="btn-clear" style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); cursor: pointer;" title="Voltar ao início">
+                            <i data-lucide="arrow-left" style="width: 0.85rem; height: 0.85rem; vertical-align: middle; margin-right: 0.2rem;"></i>Voltar
+                        </button>
+                    </div>
+
+                    <!-- Search Bar -->
+                    <div class="search-box">
+                        <div class="search-input-wrapper">
+                            <i data-lucide="search" class="search-icon-inside"></i>
+                            <input type="text" id="library-search-input" placeholder="Buscar livros para adicionar (ex: O Pequeno Príncipe)...">
+                            <button id="btn-library-search" class="btn-search-action">Buscar</button>
+                        </div>
+                    </div>
+
+                    <!-- Saved Books List -->
+                    <div class="library-list-container">
+                        <div class="history-header" style="margin-top: 1rem;">
+                            <h3><i data-lucide="library" class="history-icon"></i> LIVROS SALVOS</h3>
+                        </div>
+                        <div id="library-grid" class="history-grid">
+                            <!-- Library cards rendered dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Search Results -->
+                    <div id="search-results-container" class="search-results-container" style="display: none; margin-top: 1rem;">
+                        <div class="history-header">
+                            <h3><i data-lucide="globe" class="history-icon"></i> RESULTADOS DA BUSCA</h3>
+                            <button id="btn-clear-search-results" class="btn-clear">Limpar</button>
+                        </div>
+                        <div id="search-results-grid" class="history-grid">
+                            <!-- Search results cards rendered dynamically -->
                         </div>
                     </div>
                 </div>

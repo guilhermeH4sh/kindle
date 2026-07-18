@@ -1127,3 +1127,163 @@ body.dark-theme {
 body.dark-theme #pdf-canvas {
     filter: invert(0.9) hue-rotate(180deg);
 }
+
+/* ==========================================
+   MINHA BIBLIOTECA SECTION STYLES
+   ========================================== */
+.library-section {
+    width: 100%;
+    display: none;
+}
+
+.library-section.active {
+    display: block;
+}
+
+.btn-nav-library {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    height: 28px;
+    border-radius: var(--border-radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    padding: 0 0.6rem;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.btn-nav-library:hover {
+    color: var(--text-primary);
+    background: var(--accent-light);
+}
+
+.btn-nav-library i {
+    width: 1.15rem;
+    height: 1.15rem;
+}
+
+/* Search Box style (monochrome minimalist) */
+.search-box {
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    padding: 0.75rem;
+}
+
+.search-input-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    gap: 0.5rem;
+}
+
+.search-icon-inside {
+    position: absolute;
+    left: 0.75rem;
+    width: 1rem;
+    height: 1rem;
+    color: var(--text-secondary);
+    pointer-events: none;
+}
+
+.search-input-wrapper input {
+    flex: 1;
+    height: 36px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    background: var(--bg-page);
+    color: var(--text-primary);
+    padding-left: 2.25rem;
+    padding-right: 0.75rem;
+    font-family: inherit;
+    font-size: 0.8rem;
+    outline: none;
+    transition: var(--transition-fast);
+}
+
+.search-input-wrapper input:focus {
+    border-color: var(--accent);
+}
+
+.btn-search-action {
+    height: 36px;
+    padding: 0 1.25rem;
+    background: var(--accent);
+    color: var(--bg-card);
+    border: 1px solid var(--accent);
+    border-radius: var(--border-radius-sm);
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.btn-search-action:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+}
+
+.book-card-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+    display: block;
+}
+
+/* Button to add book from search results */
+.btn-add-library {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    width: 24px;
+    height: 24px;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    z-index: 10;
+}
+
+.btn-add-library:hover {
+    background: #eaeaea;
+    color: var(--text-primary);
+}
+
+body.dark-theme .btn-add-library:hover {
+    background: var(--accent-light);
+}
+
+.btn-add-library i {
+    width: 0.8rem;
+    height: 0.8rem;
+}
+
+/* Responsive adjustment for header navigation */
+@media (max-width: 600px) {
+    .btn-nav-library {
+        width: 28px;
+        padding: 0;
+        border-radius: 50%;
+        gap: 0;
+    }
+    .btn-nav-library .btn-label {
+        display: none;
+    }
+    
+    .header-status {
+        gap: 0.25rem;
+    }
+}
+

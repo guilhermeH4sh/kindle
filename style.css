@@ -70,13 +70,19 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    cursor: pointer;
 }
 
 .header-logo .logo-image {
-    height: 4.5rem;
+    height: 5rem;
     width: auto;
     border-radius: var(--border-radius-sm);
     object-fit: contain;
+    transition: transform var(--transition-smooth);
+}
+
+.header-logo .logo-image:hover {
+    transform: scale(1.05);
 }
 
 .header-logo .logo-subtext {
@@ -359,8 +365,8 @@ body.reader-active .reader-section {
 }
 
 .book-card-icon {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 36px;
     background: var(--accent-light);
     border-radius: var(--border-radius-sm);
     display: flex;
@@ -369,6 +375,7 @@ body.reader-active .reader-section {
     color: var(--text-secondary);
     flex-shrink: 0;
     transition: var(--transition-fast);
+    overflow: hidden;
 }
 
 .history-card:hover .book-card-icon {
@@ -720,24 +727,27 @@ body.reader-active .kindle-device-container {
 }
 
 .touch-hint {
-    background: rgba(0, 0, 0, 0.08);
+    background: rgba(0, 0, 0, 0.6);
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
     opacity: 0;
     transform: scale(0.85);
     transition: var(--transition-smooth);
-    color: var(--screen-text);
+    color: #ffffff;
     pointer-events: none;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.kindle-screen.theme-dark .touch-hint {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.05);
+body.dark-theme .touch-hint {
+    background: rgba(26, 26, 26, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: #ffffff;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .zone-prev:hover .touch-hint {
@@ -1123,9 +1133,9 @@ body.dark-theme {
     --screen-text: #e1e7f0;
 }
 
-/* Automatic PDF Canvas Inversion in Dark Theme */
-body.dark-theme #pdf-canvas {
-    filter: invert(0.9) hue-rotate(180deg);
+/* Invert logo in Dark Theme for dark background */
+body.dark-theme .logo-image {
+    filter: invert(1);
 }
 
 /* ==========================================
@@ -1272,6 +1282,10 @@ body.dark-theme .btn-add-library:hover {
 
 /* Responsive adjustment for header navigation */
 @media (max-width: 600px) {
+    .header-logo .logo-image {
+        height: 3.5rem;
+    }
+
     .btn-nav-library {
         width: 28px;
         padding: 0;
@@ -1285,5 +1299,110 @@ body.dark-theme .btn-add-library:hover {
     .header-status {
         gap: 0.25rem;
     }
+}
+
+/* ==========================================
+   CUSTOM CONFIRMATION MODAL
+   ========================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+}
+
+.modal-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    padding: 1.75rem 2rem;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: var(--kindle-shadow);
+    transform: scale(0.92);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-overlay.active .modal-box {
+    transform: scale(1);
+}
+
+.modal-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.010em;
+}
+
+.modal-message {
+    font-size: 0.825rem;
+    line-height: 1.5;
+    color: var(--text-body);
+    margin-bottom: 1.5rem;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.btn-modal {
+    padding: 0.5rem 1.25rem;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.btn-modal-cancel {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.btn-modal-cancel:hover {
+    background: var(--accent-light);
+    color: var(--text-primary);
+    border-color: var(--text-secondary);
+}
+
+.btn-modal-ok {
+    background: #e53e3e;
+    border: 1px solid #e53e3e;
+    color: #ffffff;
+}
+
+.btn-modal-ok:hover {
+    background: #c53030;
+    border-color: #c53030;
+}
+
+/* Alert Modal Ok Button Style Override (Neutral instead of red) */
+.btn-modal-ok.alert-ok-style {
+    background: var(--accent) !important;
+    border-color: var(--accent) !important;
+    color: var(--bg-card) !important;
+}
+
+.btn-modal-ok.alert-ok-style:hover {
+    background: var(--accent-hover) !important;
+    border-color: var(--accent-hover) !important;
 }
 

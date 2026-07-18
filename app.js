@@ -1327,8 +1327,8 @@ function renderOpenLibraryResults(docs) {
     if (!searchResultsGrid) return;
     searchResultsGrid.innerHTML = '';
     
-    // Filtra apenas livros que possuem identificador do Internet Archive (IA) para download de PDF
-    const docsWithPdf = docs.filter(doc => doc.ia && doc.ia.length > 0);
+    // Filtra apenas livros que possuem identificador do Internet Archive (IA) e são de domínio público (acesso livre, sem empréstimo)
+    const docsWithPdf = docs.filter(doc => doc.ia && doc.ia.length > 0 && doc.ebook_access === 'public');
     
     if (docsWithPdf.length === 0) {
         searchResultsGrid.innerHTML = `
@@ -1421,11 +1421,11 @@ function renderSearchResults(items) {
     if (!searchResultsGrid) return;
     searchResultsGrid.innerHTML = '';
     
-    // Filtra apenas resultados que possuem PDF disponível
+    // Filtra apenas resultados que possuem PDF disponível e de domínio público (sem DRM ou restrição)
     const itemsWithPdf = items.filter(item => {
         const accessInfo = item.accessInfo || {};
         const pdf = accessInfo.pdf || {};
-        return pdf.isAvailable && (pdf.downloadLink || item.volumeInfo.infoLink);
+        return pdf.isAvailable && pdf.downloadLink && accessInfo.publicDomain;
     });
     
     if (itemsWithPdf.length === 0) {

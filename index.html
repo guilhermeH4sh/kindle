@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leia!</title>
-    <link rel="icon" type="image/jpeg" href="logo.jpg">
+    <link rel="icon" type="image/png" href="logo.png">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +18,7 @@
     <!-- Main Header (Institutional Top Bar) -->
     <header class="main-header">
         <div class="header-logo">
-            <img src="logo.jpg" alt="Leia Logo" class="logo-image">
+            <img src="logo.png" alt="Leia Logo" class="logo-image">
         </div>
         <div class="header-status">
             <!-- Library Navigation Button -->
@@ -186,6 +186,18 @@
                 </div>
         </section>
     </main>
+
+    <!-- Custom Confirmation Modal (Minimalist Monochrome) -->
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 class="modal-title" id="confirm-modal-title">Confirmar</h3>
+            <p class="modal-message" id="confirm-modal-message">Deseja prosseguir?</p>
+            <div class="modal-actions">
+                <button id="confirm-modal-cancel" class="btn-modal btn-modal-cancel">Cancelar</button>
+                <button id="confirm-modal-ok" class="btn-modal btn-modal-ok">Confirmar</button>
+            </div>
+        </div>
+    </div>
 
     <!-- PDF.js CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>

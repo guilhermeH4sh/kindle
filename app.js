@@ -87,6 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setupHistoryEvents();
     setupLibraryEvents();
     setupThemeEvents();
+    setupLogoEvents();
+    setupModalEvents();
 });
 
 // ==========================================
@@ -247,6 +249,19 @@ function getBook(id) {
     });
 }
 
+function getLibraryBook(id) {
+    if (!db) return Promise.resolve(null);
+    
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction(['library'], 'readonly');
+        const store = transaction.objectStore('library');
+        const request = store.get(id);
+        
+        request.onsuccess = (e) => resolve(e.target.result);
+        request.onerror = (e) => reject(e.target.error);
+    });
+}
+
 function deleteBook(id) {
     if (!db) return Promise.resolve();
     
@@ -300,7 +315,7 @@ function renderHistoryGrid(books) {
         
         card.innerHTML = `
             <div class="book-card-icon">
-                <i data-lucide="book"></i>
+                ${book.cover ? `<img src="${book.cover}" alt="Capa">` : `<i data-lucide="book"></i>`}
             </div>
             <div class="book-card-details">
                 <div class="book-card-title" title="${book.name}">${book.name}</div>
@@ -331,8 +346,12 @@ function renderHistoryGrid(books) {
         const deleteBtn = card.querySelector('.btn-delete-book');
         deleteBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            deleteBook(book.id).then(() => {
-                loadHistoryUI();
+            showCustomConfirm('Deseja excluir este livro do seu histórico de leitura?', 'Excluir do Histórico').then(confirmed => {
+                if (confirmed) {
+                    deleteBook(book.id).then(() => {
+                        loadHistoryUI();
+                    });
+                }
             });
         });
         
@@ -459,7 +478,20 @@ function loadPDFFromHistory(arrayBuffer, startPage = 1, bookId) {
                 pdfDoc.numPages,
                 pageNum,
                 arrayBufferCopy
-            );
+            ).then(() => {
+                // Check if book cover is missing, if so generate it in background
+                if (bookId) {
+                    getBook(bookId).then(bookRecord => {
+                        if (bookRecord && !bookRecord.cover) {
+                            generateCover(pdfDoc).then(coverDataUrl => {
+                                if (coverDataUrl) {
+                                    saveBookCover(bookId, coverDataUrl);
+                                }
+                            });
+                        }
+                    });
+                }
+            });
         }
         
         // Render target page
@@ -513,11 +545,13 @@ function validateAndCleanHistory() {
 
 function setupHistoryEvents() {
     btnClearHistory.addEventListener('click', () => {
-        if (confirm('Deseja limpar todo o histórico de leitura?')) {
-            clearAllBooks().then(() => {
-                loadHistoryUI();
-            });
-        }
+        showCustomConfirm('Deseja limpar todo o histórico de leitura?', 'Limpar Histórico').then(confirmed => {
+            if (confirmed) {
+                clearAllBooks().then(() => {
+                    loadHistoryUI();
+                });
+            }
+        });
     });
 }
 
@@ -636,13 +670,21 @@ function loadPDF(arrayBuffer, startPage = 1) {
             if (filenameEl) {
                 filenameEl.textContent = currentBookMeta.name;
             }
+            const bookId = currentBookMeta.id;
             saveBookToHistory(
                 currentBookMeta.name,
                 currentBookMeta.size,
                 pdfDoc.numPages,
                 pageNum,
                 arrayBufferCopy
-            );
+            ).then(() => {
+                // Generate cover in background (non-blocking)
+                generateCover(pdfDoc).then(coverDataUrl => {
+                    if (coverDataUrl) {
+                        saveBookCover(bookId, coverDataUrl);
+                    }
+                });
+            });
         }
         
         // Render target page
@@ -1094,7 +1136,7 @@ function checkAndAddToLibrary(bookRecord) {
             name: bookRecord.name,
             title: bookRecord.name,
             author: 'PDF Local',
-            cover: null,
+            cover: bookRecord.cover || null,
             currentPage: bookRecord.currentPage,
             totalPages: bookRecord.totalPages,
             percentage: bookRecord.percentage,
@@ -1119,7 +1161,17 @@ function loadBookFromLibrary(id) {
             previousView = 'library';
             loadBookFromHistory(id);
         } else {
-            alert('Este livro foi adicionado como referência bibliográfica da busca manual e não possui um arquivo PDF para leitura.');
+            getLibraryBook(id).then(libBook => {
+                if (libBook && libBook.downloadUrl) {
+                    showCustomConfirm('Este livro ainda não possui um arquivo PDF local para leitura. Deseja abrir a página de download do PDF para baixá-lo?', 'Baixar Livro').then(confirmed => {
+                        if (confirmed) {
+                            window.open(libBook.downloadUrl, '_blank');
+                        }
+                    });
+                } else {
+                    showCustomAlert('Este livro foi adicionado como referência bibliográfica e não possui um arquivo PDF disponível para leitura.', 'Referência');
+                }
+            });
         }
     });
 }
@@ -1176,20 +1228,11 @@ function renderLibraryGrid(books) {
             `;
         }
         
-        let iconHtml = '';
-        if (book.cover) {
-            iconHtml = `
-                <div class="book-card-icon" style="height: 36px; width: 26px;">
-                    <img src="${book.cover}" alt="Capa">
-                </div>
-            `;
-        } else {
-            iconHtml = `
-                <div class="book-card-icon">
-                    <i data-lucide="book"></i>
-                </div>
-            `;
-        }
+        let iconHtml = `
+            <div class="book-card-icon">
+                ${book.cover ? `<img src="${book.cover}" alt="Capa">` : `<i data-lucide="book"></i>`}
+            </div>
+        `;
         
         card.innerHTML = `
             ${iconHtml}
@@ -1210,11 +1253,13 @@ function renderLibraryGrid(books) {
         const deleteBtn = card.querySelector('.btn-delete-book');
         deleteBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (confirm('Deseja excluir este livro da sua biblioteca?')) {
-                deleteBookFromLibrary(book.id).then(() => {
-                    loadLibraryUI();
-                });
-            }
+            showCustomConfirm('Deseja excluir este livro da sua biblioteca?', 'Excluir Livro').then(confirmed => {
+                if (confirmed) {
+                    deleteBookFromLibrary(book.id).then(() => {
+                        loadLibraryUI();
+                    });
+                }
+            });
         });
         
         libraryGrid.appendChild(card);
@@ -1240,10 +1285,11 @@ function performLibrarySearch() {
     }
     if (searchResultsContainer) searchResultsContainer.style.display = 'block';
     
+    // Tenta primeiro a API do Google Books
     fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10`)
         .then(response => {
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error(`Google Books HTTP error ${response.status}`);
             }
             return response.json();
         })
@@ -1251,58 +1297,166 @@ function performLibrarySearch() {
             renderSearchResults(data.items || []);
         })
         .catch(err => {
-            console.error('Google Books API error:', err);
-            if (searchResultsGrid) {
-                searchResultsGrid.innerHTML = `
-                    <div style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.8rem; font-weight: 500;">
-                        Erro ao buscar livros na API. Por favor, tente novamente.
-                    </div>
-                `;
-            }
+            console.warn('Google Books API falhou, tentando fallback da Open Library...', err);
+            
+            // Fallback para a Open Library API
+            fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&limit=10`)
+                .then(olResponse => {
+                    if (!olResponse.ok) {
+                        throw new Error(`Open Library HTTP error ${olResponse.status}`);
+                    }
+                    return olResponse.json();
+                })
+                .then(olData => {
+                    renderOpenLibraryResults(olData.docs || []);
+                })
+                .catch(olErr => {
+                    console.error('Todas as APIs de livros falharam:', olErr);
+                    if (searchResultsGrid) {
+                        searchResultsGrid.innerHTML = `
+                            <div style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.8rem; font-weight: 500; line-height: 1.4; max-width: 480px; margin: 0 auto;">
+                                Não foi possível carregar resultados da busca externa. Verifique sua conexão com a internet e tente novamente.
+                            </div>
+                        `;
+                    }
+                });
         });
+}
+
+function renderOpenLibraryResults(docs) {
+    if (!searchResultsGrid) return;
+    searchResultsGrid.innerHTML = '';
+    
+    // Filtra apenas livros que possuem identificador do Internet Archive (IA) para download de PDF
+    const docsWithPdf = docs.filter(doc => doc.ia && doc.ia.length > 0);
+    
+    if (docsWithPdf.length === 0) {
+        searchResultsGrid.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.8rem; font-weight: 500;">
+                Nenhum livro com PDF disponível encontrado.
+            </div>
+        `;
+        return;
+    }
+    
+    docsWithPdf.forEach(doc => {
+        const title = doc.title || 'Título desconhecido';
+        const authors = doc.author_name ? doc.author_name.join(', ') : 'Autor desconhecido';
+        const coverId = doc.cover_i;
+        const secureThumbnail = coverId ? `https://covers.openlibrary.org/b/id/${coverId}-M.jpg` : null;
+        
+        const iaId = doc.ia[0];
+        const pdfUrl = `https://archive.org/download/${iaId}/${iaId}.pdf`;
+        
+        const card = document.createElement('div');
+        card.className = 'history-card';
+        card.style.cursor = 'pointer';
+        
+        card.innerHTML = `
+            <div class="book-card-icon">
+                ${secureThumbnail ? `<img src="${secureThumbnail}" alt="Capa">` : `<i data-lucide="book"></i>`}
+            </div>
+            <div class="book-card-details">
+                <div class="book-card-title" title="${title}">${title}</div>
+                <div class="book-card-progress">
+                    <div class="book-card-text">
+                        <span>${authors}</span>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-add-library" title="Adicionar à biblioteca">
+                <i data-lucide="plus"></i>
+            </button>
+        `;
+        
+        const addHandler = (e) => {
+            e.stopPropagation();
+            
+            const workId = doc.key ? doc.key.replace(/^\/works\//, '') : Math.random().toString(36).substr(2, 9);
+            
+            const libraryRecord = {
+                id: `api-ol-${workId}`,
+                name: title,
+                title: title,
+                author: authors,
+                cover: secureThumbnail,
+                addedAt: new Date().getTime(),
+                hasPdf: false,
+                downloadUrl: pdfUrl
+            };
+            
+            getAllLibraryBooks().then(libraryBooks => {
+                const normalize = str => str ? str.toLowerCase().replace(/[^a-z0-9]/g, '') : '';
+                const titleNormalized = normalize(title);
+                
+                const isDuplicate = libraryBooks.some(libBook => {
+                    if (libBook.id === libraryRecord.id) return true;
+                    const libNormalized = normalize(libBook.name || libBook.title);
+                    return libNormalized && titleNormalized && (libNormalized === titleNormalized);
+                });
+                
+                if (isDuplicate) {
+                    showCustomAlert('Este livro já está na sua biblioteca!', 'Aviso');
+                    return;
+                }
+                
+                saveBookToLibrary(libraryRecord).then(() => {
+                    showCustomAlert('Livro adicionado à biblioteca com sucesso!', 'Sucesso');
+                    loadLibraryUI();
+                }).catch(err => {
+                    console.error('Failed to add search book to library:', err);
+                    showCustomAlert('Ocorreu um erro ao adicionar o livro.', 'Erro');
+                });
+            });
+        };
+        
+        card.addEventListener('click', addHandler);
+        searchResultsGrid.appendChild(card);
+    });
+    
+    lucide.createIcons();
 }
 
 function renderSearchResults(items) {
     if (!searchResultsGrid) return;
     searchResultsGrid.innerHTML = '';
     
-    if (items.length === 0) {
+    // Filtra apenas resultados que possuem PDF disponível
+    const itemsWithPdf = items.filter(item => {
+        const accessInfo = item.accessInfo || {};
+        const pdf = accessInfo.pdf || {};
+        return pdf.isAvailable && (pdf.downloadLink || item.volumeInfo.infoLink);
+    });
+    
+    if (itemsWithPdf.length === 0) {
         searchResultsGrid.innerHTML = `
             <div style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.8rem; font-weight: 500;">
-                Nenhum resultado encontrado.
+                Nenhum livro com PDF disponível encontrado.
             </div>
         `;
         return;
     }
     
-    items.forEach(item => {
+    itemsWithPdf.forEach(item => {
         const volumeInfo = item.volumeInfo || {};
         const title = volumeInfo.title || 'Título desconhecido';
         const authors = volumeInfo.authors ? volumeInfo.authors.join(', ') : 'Autor desconhecido';
-        const thumbnail = volumeInfo.imageLinks ? volumeInfo.imageLinks.thumbnail : null;
+        const imageLinks = volumeInfo.imageLinks || {};
+        const thumbnail = imageLinks.thumbnail || imageLinks.smallThumbnail || null;
+        const secureThumbnail = thumbnail ? thumbnail.replace(/^http:/i, 'https:') : null;
+        
+        const accessInfo = item.accessInfo || {};
+        const pdf = accessInfo.pdf || {};
+        const downloadUrl = pdf.downloadLink || item.volumeInfo.infoLink || null;
         
         const card = document.createElement('div');
         card.className = 'history-card';
         card.style.cursor = 'pointer';
         
-        let iconHtml = '';
-        if (thumbnail) {
-            const secureThumbnail = thumbnail.replace(/^http:/i, 'https:');
-            iconHtml = `
-                <div class="book-card-icon" style="height: 36px; width: 26px;">
-                    <img src="${secureThumbnail}" alt="Capa">
-                </div>
-            `;
-        } else {
-            iconHtml = `
-                <div class="book-card-icon">
-                    <i data-lucide="book"></i>
-                </div>
-            `;
-        }
-        
         card.innerHTML = `
-            ${iconHtml}
+            <div class="book-card-icon">
+                ${secureThumbnail ? `<img src="${secureThumbnail}" alt="Capa">` : `<i data-lucide="book"></i>`}
+            </div>
             <div class="book-card-details">
                 <div class="book-card-title" title="${title}">${title}</div>
                 <div class="book-card-progress">
@@ -1326,7 +1480,8 @@ function renderSearchResults(items) {
                 author: authors,
                 cover: thumbnail ? thumbnail.replace(/^http:/i, 'https:') : null,
                 addedAt: new Date().getTime(),
-                hasPdf: false
+                hasPdf: false,
+                downloadUrl: downloadUrl
             };
             
             getAllLibraryBooks().then(libraryBooks => {
@@ -1340,16 +1495,16 @@ function renderSearchResults(items) {
                 });
                 
                 if (isDuplicate) {
-                    alert('Este livro já está na sua biblioteca!');
+                    showCustomAlert('Este livro já está na sua biblioteca!', 'Aviso');
                     return;
                 }
                 
                 saveBookToLibrary(libraryRecord).then(() => {
-                    alert('Livro adicionado à biblioteca com sucesso!');
+                    showCustomAlert('Livro adicionado à biblioteca com sucesso!', 'Sucesso');
                     loadLibraryUI();
                 }).catch(err => {
                     console.error('Failed to add search book to library:', err);
-                    alert('Ocorreu um erro ao adicionar o livro.');
+                    showCustomAlert('Ocorreu um erro ao adicionar o livro.', 'Erro');
                 });
             });
         };
@@ -1397,5 +1552,169 @@ function setupLibraryEvents() {
             if (searchResultsGrid) searchResultsGrid.innerHTML = '';
             if (searchResultsContainer) searchResultsContainer.style.display = 'none';
         });
+    }
+}
+
+function setupLogoEvents() {
+    const logoContainer = document.querySelector('.header-logo');
+    if (logoContainer) {
+        logoContainer.addEventListener('click', () => {
+            if (readerSection && readerSection.classList.contains('active')) {
+                resetToUpload();
+            } else {
+                navigateTo('home');
+            }
+        });
+    }
+}
+
+let confirmPromiseResolve = null;
+
+function showCustomConfirm(message, title = 'Confirmar Ação') {
+    const modal = document.getElementById('confirm-modal');
+    const modalTitle = document.getElementById('confirm-modal-title');
+    const modalMessage = document.getElementById('confirm-modal-message');
+    
+    if (!modal || !modalTitle || !modalMessage) {
+        return Promise.resolve(confirm(message));
+    }
+    
+    modalTitle.textContent = title;
+    modalMessage.textContent = message;
+    
+    modal.style.display = 'flex';
+    modal.offsetHeight; // trigger reflow
+    modal.classList.add('active');
+    
+    return new Promise((resolve) => {
+        confirmPromiseResolve = resolve;
+    });
+}
+
+function closeCustomConfirm(result) {
+    const modal = document.getElementById('confirm-modal');
+    if (modal) {
+        modal.classList.remove('active');
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 200);
+    }
+    if (confirmPromiseResolve) {
+        confirmPromiseResolve(result);
+        confirmPromiseResolve = null;
+    }
+}
+
+function showCustomAlert(message, title = 'Aviso') {
+    const btnCancel = document.getElementById('confirm-modal-cancel');
+    if (btnCancel) btnCancel.style.display = 'none';
+    
+    const btnOk = document.getElementById('confirm-modal-ok');
+    const oldText = btnOk ? btnOk.textContent : 'Confirmar';
+    const oldClass = btnOk ? btnOk.className : 'btn-modal btn-modal-ok';
+    
+    if (btnOk) {
+        btnOk.textContent = 'Ok';
+        btnOk.className = 'btn-modal btn-modal-ok alert-ok-style';
+    }
+    
+    return showCustomConfirm(message, title).then(result => {
+        if (btnCancel) btnCancel.style.display = '';
+        if (btnOk) {
+            btnOk.textContent = oldText;
+            btnOk.className = oldClass;
+        }
+        return result;
+    });
+}
+
+function setupModalEvents() {
+    const btnCancel = document.getElementById('confirm-modal-cancel');
+    const btnOk = document.getElementById('confirm-modal-ok');
+    const modal = document.getElementById('confirm-modal');
+    
+    if (btnCancel) {
+        btnCancel.addEventListener('click', () => closeCustomConfirm(false));
+    }
+    if (btnOk) {
+        btnOk.addEventListener('click', () => closeCustomConfirm(true));
+    }
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeCustomConfirm(false);
+            }
+        });
+    }
+}
+
+function generateCover(pdf) {
+    if (!pdf) return Promise.resolve(null);
+    return pdf.getPage(1).then(page => {
+        const viewport = page.getViewport({ scale: 1.0 });
+        const scale = 120 / viewport.width;
+        const thumbViewport = page.getViewport({ scale: scale });
+        
+        const canvasOff = document.createElement('canvas');
+        canvasOff.width = thumbViewport.width;
+        canvasOff.height = thumbViewport.height;
+        const ctxOff = canvasOff.getContext('2d');
+        
+        const renderContext = {
+            canvasContext: ctxOff,
+            viewport: thumbViewport
+        };
+        
+        return page.render(renderContext).promise.then(() => {
+            try {
+                return canvasOff.toDataURL('image/jpeg', 0.6);
+            } catch (e) {
+                console.error('Error exporting canvas to DataURL:', e);
+                return null;
+            }
+        });
+    }).catch(err => {
+        console.error('Error generating PDF cover:', err);
+        return null;
+    });
+}
+
+function saveBookCover(bookId, coverDataUrl) {
+    if (!db || !coverDataUrl) return;
+    
+    try {
+        const transaction = db.transaction(['books', 'library'], 'readwrite');
+        const booksStore = transaction.objectStore('books');
+        const libraryStore = transaction.objectStore('library');
+        
+        const getBookReq = booksStore.get(bookId);
+        getBookReq.onsuccess = (e) => {
+            const record = e.target.result;
+            if (record) {
+                record.cover = coverDataUrl;
+                booksStore.put(record);
+            }
+        };
+        
+        const getLibReq = libraryStore.get(bookId);
+        getLibReq.onsuccess = (e) => {
+            const record = e.target.result;
+            if (record) {
+                record.cover = coverDataUrl;
+                libraryStore.put(record);
+            }
+        };
+        
+        transaction.oncomplete = () => {
+            console.log(`Successfully generated and saved cover for book: ${bookId}`);
+            loadHistoryUI();
+            loadLibraryUI();
+        };
+        
+        transaction.onerror = (err) => {
+            console.error('IndexedDB transaction error saving book cover:', err);
+        };
+    } catch (err) {
+        console.error('Failed to initiate transaction for saving book cover:', err);
     }
 }
